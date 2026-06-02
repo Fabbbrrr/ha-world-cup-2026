@@ -6,5 +6,6 @@
   "issue_tracker": "https://github.com/Adya84/ha-world-cup-2026/issues",
   "config_flow": true,
   "iot_class": "cloud_polling",
-  "requirements": ["aiohttp"]
+  "requirements": ["aiohttp"],
+  "codeowners": ["@Adya84"]
 }
