@@ -1,0 +1,1 @@
+# ha-world-cup-2026
