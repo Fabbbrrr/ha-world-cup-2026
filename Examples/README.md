@@ -4,7 +4,7 @@ This folder contains a ready-to-copy Home Assistant dashboard example.
 
 ## File
 
-- `world_cup_dashboard.yaml` — full dashboard example with:
+- Examples/world_cup_dashboard.yaml — full dashboard example with:
   - Group Stage page
   - Fixtures & Results page
   - Knockout Stage page
