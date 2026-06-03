@@ -16,3 +16,13 @@ class WorldCupAPI:
                 headers=headers,
             ) as response:
                 return await response.json()
+
+    async def get_standings(self):
+        headers = {"X-Auth-Token": self.api_key}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                "https://api.football-data.org/v4/competitions/WC/standings",
+                headers=headers,
+            ) as response:
+                return await response.json()
