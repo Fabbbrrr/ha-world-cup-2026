@@ -1,3 +1,5 @@
+Donate: Paypal.me/graffidoodle
+
 # ⚽ World Cup 2026 for Home Assistant
 
 Live FIFA World Cup 2026 fixtures, groups, knockout rounds, statistics and match tracking directly inside Home Assistant.
