@@ -50,7 +50,6 @@ sensor.world_cup_standings_2
 
 Copy and paste the YAML below into your Home Assistant dashboard raw configuration editor.
 
-```yaml
 views:
   - type: sections
     sections:
@@ -1110,5 +1109,3 @@ views:
             - media_content_type: app
               media_content_id: media-source://image_upload
     cards: []
-
-```
