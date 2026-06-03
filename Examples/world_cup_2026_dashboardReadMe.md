@@ -5,8 +5,8 @@ This Markdown file contains the current dashboard YAML for the **World Cup 2026*
 It is based on the latest dashboard code provided, using:
 
 ```yaml
-sensor.world_cup_fixtures_3
-sensor.world_cup_standings_2
+sensor.world_cup_fixtures
+sensor.world_cup_standings
 ```
 
 ---
@@ -33,15 +33,15 @@ sensor.world_cup_standings_2
 If your Home Assistant entity names are different, change these before saving:
 
 ```yaml
-sensor.world_cup_fixtures_3
-sensor.world_cup_standings_2
+sensor.world_cup_fixtures
+sensor.world_cup_standings
 ```
 
 For example, you may need:
 
 ```yaml
-sensor.world_cup_fixtures
-sensor.world_cup_standings
+sensor.world_cup_fixtures_1
+sensor.world_cup_standings_2
 ```
 
 ---
