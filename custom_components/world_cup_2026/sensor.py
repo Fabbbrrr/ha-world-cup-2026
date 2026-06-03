@@ -9,7 +9,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([
         WorldCupFixturesSensor(api),
         WorldCupNextMatchSensor(api),
-        WorldCupLiveMatchSensor(api),
+        WorldCupLiveMatchesSensor(api),
     ], True)
 
 
@@ -20,16 +20,35 @@ class WorldCupFixturesSensor(SensorEntity):
     def __init__(self, api):
         self.api = api
         self._attr_native_value = 0
+        self._attr_extra_state_attributes = {}
 
     async def async_update(self):
         data = await self.api.get_matches()
         matches = data.get("matches", [])
 
+        simple_matches = []
+
+        for m in matches[:40]:
+            home = m.get("homeTeam", {})
+            away = m.get("awayTeam", {})
+            score = m.get("score", {}).get("fullTime", {})
+
+            simple_matches.append({
+                "utcDate": m.get("utcDate"),
+                "status": m.get("status"),
+                "stage": m.get("stage"),
+                "group": m.get("group"),
+                "home": home.get("shortName") or home.get("name"),
+                "away": away.get("shortName") or away.get("name"),
+                "homeScore": score.get("home"),
+                "awayScore": score.get("away"),
+            })
+
         self._attr_extra_state_attributes = {
-            "matches": matches[:40]
+            "matches": simple_matches
         }
 
-        self._attr_native_value = len(matches)
+        self._attr_native_value = len(simple_matches)
 
 
 class WorldCupNextMatchSensor(SensorEntity):
@@ -39,24 +58,42 @@ class WorldCupNextMatchSensor(SensorEntity):
     def __init__(self, api):
         self.api = api
         self._attr_native_value = "Unknown"
+        self._attr_extra_state_attributes = {}
 
     async def async_update(self):
         data = await self.api.get_matches()
         matches = data.get("matches", [])
 
-        if matches:
-            match = matches[0]
+        upcoming = [
+            m for m in matches
+            if m.get("status") in ["TIMED", "SCHEDULED"]
+        ]
 
-            home = match.get("home", "TBC")
-            away = match.get("away", "TBC")
+        if not upcoming:
+            self._attr_native_value = "No upcoming matches"
+            self._attr_extra_state_attributes = {}
+            return
 
-            self._attr_native_value = f"{home} v {away}"
+        match = upcoming[0]
+        home = match.get("homeTeam", {}).get("shortName") or "TBD"
+        away = match.get("awayTeam", {}).get("shortName") or "TBD"
+        score = match.get("score", {}).get("fullTime", {})
 
-            self._attr_extra_state_attributes = {
-                "date": match.get("utcDate"),
-                "status": match.get("status"),
-                "group": match.get("group")
-                class WorldCupLiveMatchesSensor(SensorEntity):
+        self._attr_native_value = f"{home} v {away}"
+
+        self._attr_extra_state_attributes = {
+            "utcDate": match.get("utcDate"),
+            "status": match.get("status"),
+            "stage": match.get("stage"),
+            "group": match.get("group"),
+            "home": home,
+            "away": away,
+            "homeScore": score.get("home"),
+            "awayScore": score.get("away"),
+        }
+
+
+class WorldCupLiveMatchesSensor(SensorEntity):
     _attr_name = "World Cup Live Matches"
     _attr_unique_id = "world_cup_live_matches"
 
@@ -73,19 +110,22 @@ class WorldCupNextMatchSensor(SensorEntity):
 
         for m in matches:
             if m.get("status") in ["IN_PLAY", "PAUSED"]:
+                home = m.get("homeTeam", {})
+                away = m.get("awayTeam", {})
+                score = m.get("score", {}).get("fullTime", {})
+
                 live.append({
                     "utcDate": m.get("utcDate"),
                     "status": m.get("status"),
                     "stage": m.get("stage"),
                     "group": m.get("group"),
-                    "home": m.get("homeTeam", {}).get("shortName"),
-                    "away": m.get("awayTeam", {}).get("shortName"),
-                    "homeScore": m.get("score", {}).get("fullTime", {}).get("home"),
-                    "awayScore": m.get("score", {}).get("fullTime", {}).get("away"),
+                    "home": home.get("shortName") or home.get("name"),
+                    "away": away.get("shortName") or away.get("name"),
+                    "homeScore": score.get("home"),
+                    "awayScore": score.get("away"),
                 })
 
         self._attr_native_value = len(live)
         self._attr_extra_state_attributes = {
             "matches": live
         }
-            }
