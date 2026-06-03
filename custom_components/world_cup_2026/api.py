@@ -15,6 +15,7 @@ class WorldCupAPI:
                 "https://api.football-data.org/v4/competitions/WC/matches",
                 headers=headers,
             ) as response:
+                response.raise_for_status()
                 return await response.json()
 
     async def get_standings(self):
@@ -25,4 +26,5 @@ class WorldCupAPI:
                 "https://api.football-data.org/v4/competitions/WC/standings",
                 headers=headers,
             ) as response:
+                response.raise_for_status()
                 return await response.json()
