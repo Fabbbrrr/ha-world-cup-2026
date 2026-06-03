@@ -2,114 +2,231 @@
 
 A ready-to-use Home Assistant dashboard example for the **World Cup 2026** custom HACS integration.
 
-This example uses the updated dashboard YAML with the newer tournament statistics, Golden Boot cards, Top Assists, knockout stage data, tournament records and the full World Cup Stats Hub.
+This dashboard showcases the full capabilities of the integration including fixtures, standings, knockout stages, player statistics, tournament records and live match tracking.
 
 ---
 
-## ✅ Required Sensors
+# 📦 Required Components
 
-This example uses these entities:
+Before importing this dashboard, install the following components.
+
+## Required HACS Frontend Card
+
+### Card Mod
+
+Used for:
+
+* Neon Borders
+* Glassmorphism Effects
+* Glow Animations
+* Custom Styling
+* Dashboard Visual Enhancements
+
+Repository:
+
+https://github.com/thomasloven/lovelace-card-mod
+
+Install via:
+
+```text
+HACS → Frontend → Card Mod
+```
+
+---
+
+## Required Integration
+
+### World Cup 2026
+
+Repository:
+
+```text
+https://github.com/Adya84/ha-world-cup-2026
+```
+
+Install via:
+
+```text
+HACS → Integrations → World Cup 2026
+```
+
+---
+
+## Required Data Source
+
+### Football-Data.org API Key
+
+Register for a free API key:
+
+```text
+https://www.football-data.org/
+```
+
+Add your API key when configuring the integration.
+
+---
+
+# 🛠 Installation Order
+
+1. Install HACS
+2. Install Card Mod
+3. Restart Home Assistant
+4. Install World Cup 2026 Integration
+5. Restart Home Assistant
+6. Add the Integration
+7. Enter your Football-Data API Key
+8. Import the Dashboard YAML
+9. Enjoy the World Cup
+
+---
+
+# ⚠️ Entity Names
+
+This dashboard assumes the default entity names:
 
 ```yaml
-sensor.world_cup_best_defence
-sensor.world_cup_biggest_win
-sensor.world_cup_countdown
-sensor.world_cup_current_stage
-sensor.world_cup_days_until_final
 sensor.world_cup_fixtures
-sensor.world_cup_goals_per_match
-sensor.world_cup_highest_scoring_match
-sensor.world_cup_latest_result
-sensor.world_cup_live_goals
-sensor.world_cup_matches_remaining
-sensor.world_cup_progress
 sensor.world_cup_standings
-sensor.world_cup_top_assist
-sensor.world_cup_top_assists
-sensor.world_cup_top_scorer
-sensor.world_cup_top_scorers
-sensor.world_cup_top_scoring_team
+sensor.world_cup_next_match
+sensor.world_cup_live_matches
+sensor.world_cup_today_matches
+sensor.world_cup_tomorrow_matches
+sensor.world_cup_completed_matches
+
 sensor.world_cup_total_goals
 sensor.world_cup_total_matches_played
+sensor.world_cup_matches_remaining
+sensor.world_cup_progress
+sensor.world_cup_goals_per_match
+sensor.world_cup_current_stage
+sensor.world_cup_teams_remaining
+sensor.world_cup_eliminated_teams
+sensor.world_cup_live_goals
+sensor.world_cup_countdown
+sensor.world_cup_days_until_final
+
+sensor.world_cup_top_scorer
+sensor.world_cup_top_scorers
+sensor.world_cup_top_assist
+sensor.world_cup_top_assists
+
+sensor.world_cup_biggest_win
+sensor.world_cup_highest_scoring_match
+sensor.world_cup_latest_result
+sensor.world_cup_top_scoring_team
+sensor.world_cup_best_defence
 ```
 
-If Home Assistant has renamed your entities, change them before saving.
+If Home Assistant has renamed your entities, update the YAML before importing.
 
-For example, you may need:
-
-```yaml
-sensor.world_cup_fixtures_3
-sensor.world_cup_standings_2
-sensor.world_cup_total_matches_played
-```
-
-Check your entity names in:
+Check entity names in:
 
 ```text
-Settings → Devices & services → Entities
+Settings → Devices & Services → Entities
 ```
 
 ---
 
-## 📦 What This Dashboard Includes
+# 📸 Dashboard Preview
 
-- Group A-L standings
-- Fixtures and results page
-- Upcoming fixtures
-- Latest results
-- Live matches
-- Golden Boot Race
-- Golden Boot Podium
-- Top Assists
-- Knockout stage page
-- Tournament countdown with gold flash near kick-off
-- Next kick-off
-- Tournament progress
-- Tournament records
-- World Cup Stats Hub
-- Neon glass-style card design
+### Tournament Overview
 
----
+![Tournament Overview](screenshots/fixtures-results.png)
 
-## 🧩 Required HACS Frontend Add-on
+### Group Stage Tables
 
-For the custom glowing style, install:
-
-```text
-card_mod
-```
-
-The dashboard will still work without `card_mod`, but the custom styling will not show.
-
----
-
-## 📸 Screenshots
-
-Add your dashboard screenshots to a folder called `screenshots` in your repository.
-
-Recommended file names:
-
-```text
-screenshots/groups.png
-screenshots/fixtures-results.png
-screenshots/knockout-stages.png
-screenshots/world-cup-stats.png
-```
-
-Example Markdown:
-
-```markdown
 ![Group Stage](screenshots/groups.png)
-![Fixtures & Results](screenshots/fixtures-results.png)
+
+### Knockout Stage
+
 ![Knockout Stage](screenshots/knockout-stages.png)
-![World Cup Stats Hub](screenshots/world-cup-stats.png)
-```
+
+### Statistics Hub
+
+![Statistics Hub](screenshots/world-cup-stats.png)
 
 ---
 
-## ⚽ Fixture Attributes Used
+# 📦 What This Dashboard Includes
 
-The fixture cards use these cleaned attributes:
+### Fixtures & Results
+
+* Upcoming Fixtures
+* Latest Results
+* Live Matches
+* Next Match
+* Today's Matches
+* Tomorrow's Matches
+
+### Group Stage
+
+* Group A
+* Group B
+* Group C
+* Group D
+* Group E
+* Group F
+* Group G
+* Group H
+* Group I
+* Group J
+* Group K
+* Group L
+
+### Knockout Stages
+
+* Last 32
+* Last 16
+* Quarter Finals
+* Semi Finals
+* Third Place Playoff
+* Final
+
+### Player Statistics
+
+* Golden Boot Race
+* Golden Boot Podium
+* Top Assists Table
+
+### Tournament Statistics
+
+* Tournament Progress
+* Matches Played
+* Matches Remaining
+* Teams Remaining
+* Teams Eliminated
+* Total Goals
+* Goals Per Match
+* Current Stage
+* Live Goals
+* Countdown To Kick-Off
+* Days Until Final
+
+### Tournament Records
+
+* Biggest Win
+* Highest Scoring Match
+* Latest Result
+* Top Scoring Team
+* Best Defence
+
+---
+
+# 📊 Tournament Progress
+
+Tournament progress calculations use the official FIFA World Cup 2026 total of:
+
+```text
+104 Matches
+```
+
+This avoids Home Assistant state size limitations when fixture attributes are restricted.
+
+---
+
+# ⚠️ Fixture Attributes
+
+The dashboard uses the simplified fixture attributes provided by the integration:
 
 ```jinja2
 m.home
@@ -122,55 +239,14 @@ m.group
 m.stage
 ```
 
-The dashboard does not depend on raw API fields like:
-
-```jinja2
-m.homeTeam.shortName
-m.awayTeam.shortName
-m.score.fullTime.home
-m.score.fullTime.away
-```
+and does not rely on raw Football-Data API fields.
 
 ---
 
-## 📊 Tournament Progress Note
+# 📋 Full Dashboard YAML
 
-The dashboard uses:
+Copy everything inside the block below into Home Assistant's Raw Configuration Editor.
 
-```yaml
-sensor.world_cup_total_matches_played
-sensor.world_cup_matches_remaining
-sensor.world_cup_progress
-```
-
-World Cup 2026 has:
-
-```text
-104 matches
-```
-
-This avoids relying on fixture attributes being limited to 40 matches.
-
----
-
-## 🛠 How To Add This Dashboard
-
-1. Open Home Assistant.
-2. Go to your dashboard.
-3. Click the three dots in the top-right.
-4. Select **Edit Dashboard**.
-5. Click the three dots again.
-6. Select **Raw configuration editor**.
-7. Paste the YAML below.
-8. Save.
-
----
-
-# 📋 Full Dashboard YAML Example
-
-Copy everything inside this YAML block.
-
-```yaml
 views:
   - type: sections
     sections:
@@ -1889,5 +1965,29 @@ views:
                   border-bottom: none;
                 }
     cards: []
-
+E
 ```
+
+---
+
+# 🏆 Support Development
+
+If you enjoy this integration and would like to support future development:
+
+### 💙 Donate via PayPal
+
+https://paypal.me/graffidoodle
+
+Donations help support:
+
+* New Features
+* Dashboard Enhancements
+* Additional Statistics
+* Tournament Improvements
+* Ongoing Maintenance
+
+Thank you for your support.
+
+---
+
+Created by **Adrian Apel**
