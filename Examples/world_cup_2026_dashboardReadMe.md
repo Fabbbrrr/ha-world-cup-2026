@@ -64,7 +64,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group A', 'GROUP_A'] %}
                 {% for t in g.table %}
                 <tr>
@@ -111,7 +111,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group B', 'GROUP_B'] %}
                 {% for t in g.table %}
                 <tr>
@@ -158,7 +158,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group E', 'GROUP_E'] %}
                 {% for t in g.table %}
                 <tr>
@@ -205,7 +205,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group F', 'GROUP_F'] %}
                 {% for t in g.table %}
                 <tr>
@@ -252,7 +252,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group I', 'GROUP_I'] %}
                 {% for t in g.table %}
                 <tr>
@@ -299,7 +299,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group J', 'GROUP_J'] %}
                 {% for t in g.table %}
                 <tr>
@@ -351,7 +351,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group C', 'GROUP_C'] %}
                 {% for t in g.table %}
                 <tr>
@@ -398,7 +398,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group D', 'GROUP_D'] %}
                 {% for t in g.table %}
                 <tr>
@@ -445,7 +445,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group G', 'GROUP_G'] %}
                 {% for t in g.table %}
                 <tr>
@@ -492,7 +492,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group H', 'GROUP_H'] %}
                 {% for t in g.table %}
                 <tr>
@@ -539,7 +539,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group K', 'GROUP_K'] %}
                 {% for t in g.table %}
                 <tr>
@@ -586,7 +586,7 @@ views:
                 <tr>
                   <th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
                 </tr>
-                {% set s = state_attr('sensor.world_cup_standings_2', 'standings') or [] %}
+                {% set s = state_attr('sensor.world_cup_standings', 'standings') or [] %}
                 {% for g in s if g.group in ['Group L', 'GROUP_L'] %}
                 {% for t in g.table %}
                 <tr>
@@ -676,7 +676,7 @@ views:
               <h2>📅 Upcoming Fixtures</h2>
 
 
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
 
 
@@ -745,7 +745,7 @@ views:
               ## ⚽ Latest Results
 
 
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
 
               {% set results = matches | selectattr('status', 'eq', 'FINISHED')
@@ -804,7 +804,7 @@ views:
                 }
           - type: markdown
             content: >
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %} {% set live = matches | selectattr('status',
               'eq', 'IN_PLAY') | list %}
 
@@ -878,7 +878,7 @@ views:
               appear.</h3>
 
 
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
 
               {% set ko = matches | rejectattr('stage', 'eq', 'GROUP_STAGE') |
@@ -992,7 +992,7 @@ views:
             content: >
               # ⚽ Next Kick-Off
 
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %} {% set upcoming = matches |
               selectattr('status','in',['TIMED','SCHEDULED']) | list %}
 
@@ -1022,7 +1022,7 @@ views:
               # 📊 Tournament Progress
 
 
-              {% set matches = state_attr('sensor.world_cup_fixtures_3',
+              {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
 
               {% set finished = matches | selectattr('status','eq','FINISHED') |
