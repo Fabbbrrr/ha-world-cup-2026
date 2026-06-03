@@ -10,6 +10,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     sensors = [
         WorldCupFixturesSensor(api),
+        WorldCupStandingsSensor(api),
         WorldCupNextMatchSensor(api),
         WorldCupLiveMatchesSensor(api),
         WorldCupTodayMatchesSensor(api),
@@ -90,6 +91,52 @@ class WorldCupFixturesSensor(SensorEntity):
         self._attr_native_value = len(matches)
         self._attr_extra_state_attributes = {
             "matches": [format_match(m) for m in matches[:40]]
+        }
+
+
+class WorldCupStandingsSensor(SensorEntity):
+    _attr_name = "World Cup Standings"
+    _attr_unique_id = "world_cup_standings"
+
+    def __init__(self, api):
+        self.api = api
+        self._attr_native_value = "Unknown"
+        self._attr_extra_state_attributes = {}
+
+    async def async_update(self):
+        data = await self.api.get_standings()
+        standings = data.get("standings", [])
+
+        clean_standings = []
+
+        for group in standings:
+            table = []
+
+            for team in group.get("table", []):
+                team_data = team.get("team", {})
+
+                table.append({
+                    "position": team.get("position"),
+                    "team": team_data.get("shortName") or team_data.get("name"),
+                    "playedGames": team.get("playedGames"),
+                    "won": team.get("won"),
+                    "draw": team.get("draw"),
+                    "lost": team.get("lost"),
+                    "goalsFor": team.get("goalsFor"),
+                    "goalsAgainst": team.get("goalsAgainst"),
+                    "goalDifference": team.get("goalDifference"),
+                    "points": team.get("points"),
+                })
+
+            clean_standings.append({
+                "group": group.get("group"),
+                "stage": group.get("stage"),
+                "table": table,
+            })
+
+        self._attr_native_value = len(clean_standings)
+        self._attr_extra_state_attributes = {
+            "standings": clean_standings
         }
 
 
