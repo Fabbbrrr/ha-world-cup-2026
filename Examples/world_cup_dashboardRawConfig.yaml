@@ -684,10 +684,311 @@ views:
         cards:
           - type: heading
             heading_style: title
-      - type: grid
-        cards:
-          - type: heading
-            heading_style: title
+          - type: markdown
+            content: >
+              # 🏆 GOLDEN BOOT RACE
+
+
+              {% set scorers = state_attr('sensor.world_cup_top_scorers',
+              'scorers') or [] %}
+
+
+              {% if scorers | count == 0 %}
+
+              ⚽ No goals scored yet
+
+              {% else %}
+
+              {% for p in scorers[:10] %}
+
+              <div class="scorer-row">
+                <span class="rank">
+                  {% if loop.index == 1 %}🥇
+                  {% elif loop.index == 2 %}🥈
+                  {% elif loop.index == 3 %}🥉
+                  {% else %}{{ loop.index }}.
+                  {% endif %}
+                </span>
+                <span class="player">{{ p.name }}</span>
+                <span class="team">{{ p.team }}</span>
+                <span class="goals">{{ p.goals }} ⚽</span>
+              </div>
+
+              {% endfor %}
+
+              {% endif %}
+            card_mod:
+              style:
+                ha-markdown$: |
+                  h1 {
+                    text-align: center;
+                    font-size: 22px;
+                    margin-bottom: 18px;
+                    color: #ffffff;
+                    text-shadow:
+                      0 0 8px rgba(0,255,255,0.9),
+                      0 0 18px rgba(0,255,255,0.55);
+                  }
+
+                  .scorer-row {
+                    display: grid;
+                    grid-template-columns: 42px 1fr 90px 58px;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 8px 0;
+                    padding: 10px 12px;
+                    border-radius: 14px;
+                    background: rgba(0,255,255,0.07);
+                    border: 1px solid rgba(0,255,255,0.18);
+                  }
+
+                  .rank {
+                    font-size: 18px;
+                    text-align: center;
+                  }
+
+                  .player {
+                    font-weight: 700;
+                    color: #ffffff;
+                  }
+
+                  .team {
+                    font-size: 12px;
+                    color: rgba(255,255,255,0.7);
+                    text-align: right;
+                  }
+
+                  .goals {
+                    font-weight: 800;
+                    color: #00ffff;
+                    text-align: right;
+                    text-shadow: 0 0 8px rgba(0,255,255,0.7);
+                  }
+                .: |
+                  ha-card {
+                    background: rgba(5,14,24,0.38) !important;
+                    backdrop-filter: blur(10px);
+                    border-radius: 24px;
+                    border: 2px solid rgba(0,255,255,0.38);
+                    box-shadow:
+                      0 0 20px rgba(0,255,255,0.25),
+                      inset 0 0 14px rgba(0,255,255,0.08);
+                    padding: 14px;
+                    overflow: hidden;
+                  }
+          - type: markdown
+            content: >
+              {% set scorers =
+              state_attr('sensor.world_cup_top_scorers','scorers') or [] %}
+
+
+              # 👟 GOLDEN BOOT PODIUM
+
+
+              {% if scorers|count >= 3 %}
+
+
+              <div class="podium">
+
+
+              <div class="second">
+
+              <div class="player">{{ scorers[1].name }}</div>
+
+              <div class="team">{{ scorers[1].team }}</div>
+
+              <div class="goals">{{ scorers[1].goals }} ⚽</div>
+
+              <div class="step silver">2</div>
+
+              </div>
+
+
+              <div class="first">
+
+              <div class="player winner">{{ scorers[0].name }}</div>
+
+              <div class="team">{{ scorers[0].team }}</div>
+
+              <div class="goals">{{ scorers[0].goals }} ⚽</div>
+
+              <div class="step gold">👟</div>
+
+              </div>
+
+
+              <div class="third">
+
+              <div class="player">{{ scorers[2].name }}</div>
+
+              <div class="team">{{ scorers[2].team }}</div>
+
+              <div class="goals">{{ scorers[2].goals }} ⚽</div>
+
+              <div class="step bronze">3</div>
+
+              </div>
+
+
+              </div>
+
+
+              {% else %}
+
+              Waiting for scorer data...
+
+              {% endif %}
+            card_mod:
+              style:
+                ha-markdown$: |
+                  h1 {
+                    text-align: center;
+                    font-size: 22px;
+                    margin-bottom: 18px;
+                    color: #ffffff;
+                    text-shadow:
+                      0 0 8px rgba(0,255,255,0.9),
+                      0 0 18px rgba(0,255,255,0.55);
+                  }
+
+                  .scorer-row {
+                    display: grid;
+                    grid-template-columns: 42px 1fr 90px 58px;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 8px 0;
+                    padding: 10px 12px;
+                    border-radius: 14px;
+                    background: rgba(0,255,255,0.07);
+                    border: 1px solid rgba(0,255,255,0.18);
+                  }
+
+                  .rank {
+                    font-size: 18px;
+                    text-align: center;
+                  }
+
+                  .player {
+                    font-weight: 700;
+                    color: #ffffff;
+                  }
+
+                  .team {
+                    font-size: 12px;
+                    color: rgba(255,255,255,0.7);
+                    text-align: right;
+                  }
+
+                  .goals {
+                    font-weight: 800;
+                    color: #00ffff;
+                    text-align: right;
+                    text-shadow: 0 0 8px rgba(0,255,255,0.7);
+                  }
+                .: |
+                  ha-card {
+                    background: rgba(5,14,24,0.38) !important;
+                    backdrop-filter: blur(10px);
+                    border-radius: 24px;
+                    border: 2px solid rgba(0,255,255,0.38);
+                    box-shadow:
+                      0 0 20px rgba(0,255,255,0.25),
+                      inset 0 0 14px rgba(0,255,255,0.08);
+                    padding: 14px;
+                    overflow: hidden;
+                  }
+          - type: markdown
+            content: >
+              # 🎯 TOP ASSISTS
+
+
+              {% set assists = state_attr('sensor.world_cup_top_assists',
+              'assists') or [] %}
+
+
+              {% if assists | count == 0 %}
+
+              🎯 No assists yet
+
+              {% else %}
+
+              {% for p in assists[:10] %}
+
+              <div class="assist-row">
+                <span class="rank">
+                  {% if loop.index == 1 %}🎯👑
+                  {% elif loop.index == 2 %}🎯
+                  {% elif loop.index == 3 %}🎯
+                  {% else %}{{ loop.index }}.
+                  {% endif %}
+                </span>
+                <span class="player">{{ p.name }}</span>
+                <span class="team">{{ p.team }}</span>
+                <span class="assists">{{ p.assists }} 🎯</span>
+              </div>
+
+              {% endfor %}
+
+              {% endif %}
+            card_mod:
+              style:
+                ha-markdown$: |
+                  h1 {
+                    text-align: center;
+                    font-size: 22px;
+                    margin-bottom: 18px;
+                    color: #ffffff;
+                    text-shadow:
+                      0 0 8px rgba(0,255,255,0.9),
+                      0 0 18px rgba(0,255,255,0.55);
+                  }
+
+                  .scorer-row {
+                    display: grid;
+                    grid-template-columns: 42px 1fr 90px 58px;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 8px 0;
+                    padding: 10px 12px;
+                    border-radius: 14px;
+                    background: rgba(0,255,255,0.07);
+                    border: 1px solid rgba(0,255,255,0.18);
+                  }
+
+                  .rank {
+                    font-size: 18px;
+                    text-align: center;
+                  }
+
+                  .player {
+                    font-weight: 700;
+                    color: #ffffff;
+                  }
+
+                  .team {
+                    font-size: 12px;
+                    color: rgba(255,255,255,0.7);
+                    text-align: right;
+                  }
+
+                  .goals {
+                    font-weight: 800;
+                    color: #00ffff;
+                    text-align: right;
+                    text-shadow: 0 0 8px rgba(0,255,255,0.7);
+                  }
+                .: |
+                  ha-card {
+                    background: rgba(5,14,24,0.38) !important;
+                    backdrop-filter: blur(10px);
+                    border-radius: 24px;
+                    border: 2px solid rgba(0,255,255,0.38);
+                    box-shadow:
+                      0 0 20px rgba(0,255,255,0.25),
+                      inset 0 0 14px rgba(0,255,255,0.08);
+                    padding: 14px;
+                    overflow: hidden;
+                  }
           - type: markdown
             content: >
               ## ⚽ Latest Results
@@ -750,6 +1051,41 @@ views:
                   padding: 6px;
                   border-bottom: 1px solid rgba(255,255,255,0.12);
                 }
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+          - type: markdown
+            content: >
+              <center> 🏆<br> <b>FIFA WORLD CUP</b><br> <b>2026</b><br> USA •
+              CANADA • MEXICO<br><br>
+
+              <b>PRE TOURNAMENT</b><br> <span
+              style="font-size:52px;font-weight:900;color:#00ffff;"> {{
+              states('sensor.world_cup_countdown') }} </span><br> DAYS TO
+              GO<br><br>
+
+              <b style="font-size:28px;color:#00ffff;"> {{
+              states('sensor.world_cup_total_matches_played') }} / 104 </b><br>
+              MATCHES PLAYED<br><br>
+
+              ⚽ {{ states('sensor.world_cup_total_goals') }} GOALS<br> 📈 {{
+              states('sensor.world_cup_goals_per_match') }} GOALS / MATCH
+              </center>
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                  background: rgba(5,14,24,0.48);
+                  border-radius: 28px;
+                  border: 2px solid rgba(0,255,255,0.38);
+                  box-shadow:
+                    0 0 30px rgba(0,255,255,0.25),
+                    inset 0 0 15px rgba(0,255,255,0.08);
+                  padding: 28px;
+                  color: white;
+                  font-size: 16px;
+                }
           - type: markdown
             content: >
               {% set matches = state_attr('sensor.world_cup_fixtures',
@@ -786,11 +1122,158 @@ views:
                   color: white;
                   font-weight: 500;
                 }
-    header:
-      card:
-        type: markdown
-        text_only: true
-        content: <h1>📅 World Cup Fixtures</h1> <h3>Upcoming Group Stage Matches</h3>
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+          - type: markdown
+            content: >
+              # ⏳ Tournament Countdown
+
+
+              {% set kickoff = as_datetime('2026-06-11 20:00:00') %}
+
+              {% set days = ((as_timestamp(kickoff) - as_timestamp(now())) /
+              86400) | int %}
+
+
+              🏆 World Cup starts in
+
+
+              {% if days <= 1 %}
+
+              # <span style="color:#FFD700;">{{ days }}</span> Days
+
+              ## 🏆 KICKOFF IMMINENT 🏆
+
+              {% elif days <= 3 %}
+
+              # {{ days }} Days
+
+              ## ⚽ Almost Time!
+
+              {% elif days <= 7 %}
+
+              # {{ days }} Days
+
+              ## 🏟️ One Week To Go
+
+              {% else %}
+
+              # {{ days }} Days
+
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+
+                  {% set kickoff = as_datetime('2026-06-11 20:00:00') %}
+                  {% set days = ((as_timestamp(kickoff) - as_timestamp(now())) / 86400) | int %}
+
+                  background: rgba(5,14,24,0.45);
+                  border-radius: 22px;
+                  color: white;
+                  text-align: center;
+                  padding: 18px;
+
+                  {% if days <= 1 %}
+                  border: 2px solid rgba(255,215,0,0.95);
+                  animation: wcGoldPulse 1s infinite;
+                  {% elif days <= 3 %}
+                  border: 2px solid rgba(255,140,0,0.9);
+                  animation: wcPulseOrange 2s infinite;
+                  {% elif days <= 7 %}
+                  border: 2px solid rgba(255,215,0,0.75);
+                  animation: wcPulseGoldSlow 3s infinite;
+                  {% else %}
+                  border: 2px solid rgba(0,255,255,0.45);
+                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
+                  {% endif %}
+                }
+
+                @keyframes wcGoldPulse {
+                  0% {
+                    box-shadow:
+                      0 0 10px rgba(255,215,0,0.4),
+                      0 0 20px rgba(255,215,0,0.4),
+                      inset 0 0 10px rgba(255,215,0,0.2);
+                  }
+
+                  50% {
+                    box-shadow:
+                      0 0 25px rgba(255,215,0,1),
+                      0 0 50px rgba(255,215,0,0.9),
+                      0 0 80px rgba(255,215,0,0.7),
+                      inset 0 0 20px rgba(255,215,0,0.4);
+                  }
+
+                  100% {
+                    box-shadow:
+                      0 0 10px rgba(255,215,0,0.4),
+                      0 0 20px rgba(255,215,0,0.4),
+                      inset 0 0 10px rgba(255,215,0,0.2);
+                  }
+                }
+
+                @keyframes wcPulseOrange {
+                  0% {
+                    box-shadow:
+                      0 0 10px rgba(255,140,0,0.4);
+                  }
+
+                  50% {
+                    box-shadow:
+                      0 0 30px rgba(255,140,0,0.9);
+                  }
+
+                  100% {
+                    box-shadow:
+                      0 0 10px rgba(255,140,0,0.4);
+                  }
+                }
+
+                @keyframes wcPulseGoldSlow {
+                  0% {
+                    box-shadow:
+                      0 0 10px rgba(255,215,0,0.25);
+                  }
+
+                  50% {
+                    box-shadow:
+                      0 0 25px rgba(255,215,0,0.75);
+                  }
+
+                  100% {
+                    box-shadow:
+                      0 0 10px rgba(255,215,0,0.25);
+                  }
+                }
+          - type: markdown
+            content: >
+              # ⚽ Next Kick-Off
+
+              {% set matches = state_attr('sensor.world_cup_fixtures',
+              'matches') or [] %} {% set upcoming = matches |
+              selectattr('status','in',['TIMED','SCHEDULED']) | list %}
+
+              {% if upcoming %}
+                {{ upcoming[0].home }} v {{ upcoming[0].away }}
+
+                🕒 {{ as_timestamp(upcoming[0].utcDate) | timestamp_custom('%d %b %H:%M', true) }}
+              {% else %}
+                No upcoming fixtures found.
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(5,14,24,0.45);
+                  border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
+                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
+                  color: white;
+                  padding: 14px;
+                }
+    header: {}
     icon: ''
     show_icon_and_title: true
     cards: []
@@ -902,55 +1385,60 @@ views:
                   padding: 7px;
                   border-bottom: 1px solid rgba(255,255,255,0.12);
                 }
-      - type: grid
-        cards:
-          - type: heading
-            heading_style: title
-      - type: grid
-        cards:
-          - type: heading
-            heading_style: title
           - type: markdown
             content: >
-              # ⏳ Tournament Countdown
+              # 🏆 Knockout Stage
 
 
-              {% set kickoff = as_datetime('2026-06-11 20:00:00') %}
+              {% set played = states('sensor.world_cup_total_matches_played') |
+              int(0) %}
 
-              {% set days = ((as_timestamp(kickoff) - as_timestamp(now())) /
-              86400) | int %}
-
-
-              🏆 World Cup starts in
+              {% set stage = states('sensor.world_cup_current_stage') %}
 
 
-              # {{ days }} Days
-            card_mod:
-              style: |
-                ha-card {
-                  background: rgba(5,14,24,0.45);
-                  border: 2px solid rgba(0,255,255,0.45);
-                  border-radius: 22px;
-                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
-                  color: white;
-                  text-align: center;
-                  padding: 18px;
-                }
-          - type: markdown
-            content: >
-              # ⚽ Next Kick-Off
-
-              {% set matches = state_attr('sensor.world_cup_fixtures',
-              'matches') or [] %} {% set upcoming = matches |
-              selectattr('status','in',['TIMED','SCHEDULED']) | list %}
-
-              {% if upcoming %}
-                {{ upcoming[0].home }} v {{ upcoming[0].away }}
-
-                🕒 {{ as_timestamp(upcoming[0].utcDate) | timestamp_custom('%d %b %H:%M', true) }}
+              {% if played == 0 %}
+                {% set teams = 48 %}
+                {% set fixed_stage = 'Pre Tournament' %}
+              {% elif stage == 'Group Stage' %}
+                {% set teams = 48 %}
+                {% set fixed_stage = stage %}
+              {% elif stage == 'Last 32' %}
+                {% set teams = 32 %}
+                {% set fixed_stage = stage %}
+              {% elif stage == 'Last 16' %}
+                {% set teams = 16 %}
+                {% set fixed_stage = stage %}
+              {% elif stage == 'Quarter Finals' %}
+                {% set teams = 8 %}
+                {% set fixed_stage = stage %}
+              {% elif stage == 'Semi Finals' %}
+                {% set teams = 4 %}
+                {% set fixed_stage = stage %}
+              {% elif stage == 'Final' %}
+                {% set teams = 2 %}
+                {% set fixed_stage = stage %}
               {% else %}
-                No upcoming fixtures found.
+                {% set teams = 48 %}
+                {% set fixed_stage = stage %}
               {% endif %}
+
+
+              ## {{ fixed_stage }}
+
+
+              ### 🌍 Teams Remaining
+
+              # {{ teams }}
+
+
+              ### ❌ Eliminated
+
+              # {{ 48 - teams }}
+
+
+              ### ⚽ Matches Remaining
+
+              # {{ states('sensor.world_cup_matches_remaining') }}
             card_mod:
               style: |
                 ha-card {
@@ -960,7 +1448,27 @@ views:
                   box-shadow: 0 0 20px rgba(0,255,255,0.30);
                   color: white;
                   padding: 14px;
+                  text-align: center;
                 }
+
+                h1 {
+                  color: #00ffff;
+                  margin-top: 0;
+                }
+
+                h2 {
+                  color: white;
+                  margin-bottom: 18px;
+                }
+
+                h3 {
+                  color: rgba(255,255,255,0.75);
+                  margin-bottom: 0;
+                }
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
       - type: grid
         cards:
           - type: heading
@@ -1014,20 +1522,28 @@ views:
                   color: #00ffff;
                   margin-top: 0;
                 }
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
           - type: markdown
             content: |
-              # 🏟 Host Cities
+              # 🏆 Tournament Records
 
-              🇺🇸 New York
-              🇺🇸 Los Angeles
-              🇺🇸 Dallas
-              🇺🇸 Miami
+              ## 🔥 Biggest Win
+              # {{ states('sensor.world_cup_biggest_win') }}
 
-              🇨🇦 Toronto
-              🇨🇦 Vancouver
+              ## 🚀 Highest Scoring Match
+              # {{ states('sensor.world_cup_highest_scoring_match') }}
 
-              🇲🇽 Mexico City
-              🇲🇽 Guadalajara
+              ## ⚽ Top Scoring Team
+              # {{ states('sensor.world_cup_top_scoring_team') }}
+
+              ## 🛡️ Best Defence
+              # {{ states('sensor.world_cup_best_defence') }}
+
+              ## 📰 Latest Result
+              # {{ states('sensor.world_cup_latest_result') }}
             card_mod:
               style: |
                 ha-card {
@@ -1037,11 +1553,31 @@ views:
                   box-shadow: 0 0 20px rgba(0,255,255,0.30);
                   color: white;
                   padding: 14px;
+                  text-align: center;
                 }
-      - type: grid
-        cards:
-          - type: heading
-            heading_style: title
+
+                h1 {
+                  color: #00ffff;
+                  margin-top: 0;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
+                }
+
+                h2 {
+                  color: rgba(255,255,255,0.75);
+                  font-size: 16px;
+                  margin-bottom: 2px;
+                }
+
+                h1 + h2 {
+                  margin-top: 12px;
+                }
+
+                h2 + h1 {
+                  color: white;
+                  font-size: 20px;
+                  margin-top: 0;
+                  margin-bottom: 14px;
+                }
     header:
       card:
         type: markdown
@@ -1064,4 +1600,119 @@ views:
             - {}
             - media_content_type: app
               media_content_id: media-source://image_upload
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: 📊 World Cup Stats Hub
+    path: stats
+    sections:
+      - type: grid
+        cards:
+          - type: markdown
+            content: >
+              # 📊 World Cup Stats Hub
+
+
+              {% set played = states('sensor.world_cup_total_matches_played') |
+              int(0) %}
+
+              {% set stage = states('sensor.world_cup_current_stage') %}
+
+
+              {% if played == 0 %}
+                {% set teams = 48 %}
+              {% elif stage == 'Group Stage' %}
+                {% set teams = 48 %}
+              {% elif stage == 'Last 32' %}
+                {% set teams = 32 %}
+              {% elif stage == 'Last 16' %}
+                {% set teams = 16 %}
+              {% elif stage == 'Quarter Finals' %}
+                {% set teams = 8 %}
+              {% elif stage == 'Semi Finals' %}
+                {% set teams = 4 %}
+              {% elif stage == 'Final' %}
+                {% set teams = 2 %}
+              {% else %}
+                {% set teams = 48 %}
+              {% endif %}
+
+
+              <table>
+                <tr><td>🏆 Current Stage</td><td>{{ states('sensor.world_cup_current_stage') }}</td></tr>
+                <tr><td>⏳ Days Until Kickoff</td><td>{{ states('sensor.world_cup_countdown') }}</td></tr>
+                <tr><td>🏁 Days Until Final</td><td>{{ states('sensor.world_cup_days_until_final') }}</td></tr>
+                <tr><td>📈 Tournament Progress</td><td>{{ states('sensor.world_cup_progress') }}%</td></tr>
+                <tr><td>⚽ Matches Played</td><td>{{ states('sensor.world_cup_total_matches_played') }} / 104</td></tr>
+                <tr><td>🧮 Matches Remaining</td><td>{{ states('sensor.world_cup_matches_remaining') }}</td></tr>
+
+                {% if played == 0 %}
+                <tr><td>🌍 Teams Entered</td><td>48</td></tr>
+                <tr><td>❌ Teams Eliminated</td><td>0</td></tr>
+                {% else %}
+                <tr><td>🌍 Teams Remaining</td><td>{{ teams }}</td></tr>
+                <tr><td>❌ Teams Eliminated</td><td>{{ 48 - teams }}</td></tr>
+                {% endif %}
+
+                <tr><td>⚽ Total Goals</td><td>{{ states('sensor.world_cup_total_goals') }}</td></tr>
+                <tr><td>📊 Goals Per Match</td><td>{{ states('sensor.world_cup_goals_per_match') }}</td></tr>
+                <tr><td>🔴 Live Goals</td><td>{{ states('sensor.world_cup_live_goals') }}</td></tr>
+                <tr><td>🔥 Biggest Win</td><td>{{ states('sensor.world_cup_biggest_win') }}</td></tr>
+                <tr><td>🚀 Highest Scoring Match</td><td>{{ states('sensor.world_cup_highest_scoring_match') }}</td></tr>
+                <tr><td>📰 Latest Result</td><td>{{ states('sensor.world_cup_latest_result') }}</td></tr>
+                <tr><td>👟 Top Scorer</td><td>{{ states('sensor.world_cup_top_scorer') }}</td></tr>
+                <tr><td>🎯 Top Assist</td><td>{{ states('sensor.world_cup_top_assist') }}</td></tr>
+                <tr><td>⚽ Top Scoring Team</td><td>{{ states('sensor.world_cup_top_scoring_team') }}</td></tr>
+                <tr><td>🛡️ Best Defence</td><td>{{ states('sensor.world_cup_best_defence') }}</td></tr>
+              </table>
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(5,14,24,0.45);
+                  border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
+                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
+                  color: white;
+                  padding: 14px;
+                }
+
+                h1 {
+                  color: #00ffff;
+                  text-align: center;
+                  margin-top: 0;
+                  margin-bottom: 15px;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
+                }
+
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  font-size: 14px;
+                }
+
+                td {
+                  padding: 8px 6px;
+                  border-bottom: 1px solid rgba(0,255,255,0.15);
+                }
+
+                td:first-child {
+                  text-align: left;
+                  color: rgba(255,255,255,0.75);
+                  font-weight: 600;
+                  width: 50%;
+                }
+
+                td:last-child {
+                  text-align: right;
+                  color: white;
+                  font-weight: 800;
+                }
+
+                tr:hover {
+                  background: rgba(0,255,255,0.05);
+                }
+
+                tr:last-child td {
+                  border-bottom: none;
+                }
     cards: []
