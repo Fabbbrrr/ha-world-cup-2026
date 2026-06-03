@@ -637,12 +637,13 @@ views:
                 </tr>
 
                 {% for m in matches[:10] %}
+                {% set status = 'Scheduled' if m.status in ['TIMED', 'SCHEDULED'] else 'LIVE' if m.status == 'IN_PLAY' else 'Half Time' if m.status == 'PAUSED' else 'Finished' if m.status == 'FINISHED' else m.status %}
                 <tr>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%d %b', true) }}</td>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%H:%M', true) }}</td>
                   <td>{{ m.home }} v {{ m.away }}</td>
                   <td>{{ m.group | replace('GROUP_', 'Group ') if m.group else '-' }}</td>
-                  <td>{{ m.status }}</td>
+                  <td>{{ status }}</td>
                 </tr>
                 {% endfor %}
               </table>
@@ -969,27 +970,34 @@ views:
               # 📊 Tournament Progress
 
 
-              {% set matches = state_attr('sensor.world_cup_fixtures',
-              'matches') or [] %}
+              {% set played = states('sensor.world_cup_total_matches_played') |
+              int(0) %}
 
-              {% set finished = matches | selectattr('status','eq','FINISHED') |
-              list %}
+              {% set total = 104 %}
 
 
               Matches Played:
 
-              ## {{ finished | count }}
+
+              ## {{ played }}
 
 
               Total Matches:
 
-              ## {{ matches | count }}
+
+              ## {{ total }}
+
+
+              Matches Remaining:
+
+
+              ## {{ total - played }}
 
 
               Progress:
 
-              ## {{ ((finished | count / matches | count) * 100) | round(1) if
-              matches | count > 0 else 0 }}%
+
+              ## {{ ((played / total) * 100) | round(1) }}%
             card_mod:
               style: |
                 ha-card {
