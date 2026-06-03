@@ -1,45 +1,26 @@
 # ⚽ FIFA World Cup 2026 for Home Assistant
 
-Live FIFA World Cup 2026 fixtures, groups, knockout rounds, statistics, top scorers, assists and match tracking directly inside Home Assistant.
+Live FIFA World Cup 2026 fixtures, standings, groups, knockout stages, player statistics and tournament records directly inside Home Assistant.
 
-Built for Home Assistant with HACS support.
-
----
-
-## 🏆 Support Development
-
-Enjoying the integration?
-
-Help keep the project alive and improving by supporting development.
-
-### 💙 Donate via PayPal
-
-👉 **https://paypal.me/graffidoodle**
-
-Every contribution helps fund:
-
-* ⚽ New Features
-* 📊 Enhanced Statistics
-* 🏟️ Match Data Improvements
-* 🔧 Ongoing Maintenance
-* 🏆 Dashboard Examples
-
-**Thank you for supporting the World Cup 2026 Integration!**
+Track every match of the 2026 FIFA World Cup from kick-off to the Final with live updates, tournament statistics and custom dashboard cards.
 
 ---
 
-## ✨ Features
+# 🏆 Features
 
-### Fixtures
+## ⚽ Fixtures & Results
 
 * Next Match
 * Live Matches
 * Today's Matches
 * Tomorrow's Matches
 * Completed Matches
+* Latest Result
 * Full Tournament Fixture List
 
-### Groups
+## 🌍 Group Stage Tracking
+
+Monitor all 12 World Cup groups:
 
 * Group A
 * Group B
@@ -54,7 +35,19 @@ Every contribution helps fund:
 * Group K
 * Group L
 
-### Knockout Stages
+Includes:
+
+* Position
+* Played
+* Wins
+* Draws
+* Losses
+* Goal Difference
+* Points
+
+## 🏆 Knockout Stages
+
+Track the entire knockout tournament:
 
 * Last 32
 * Last 16
@@ -63,130 +56,136 @@ Every contribution helps fund:
 * Third Place Playoff
 * Final
 
-### Tournament Statistics
+## 📊 Tournament Statistics
 
-* Total Goals
+* Tournament Progress
 * Matches Played
 * Matches Remaining
-* Tournament Progress
+* Total Goals
 * Goals Per Match
 * Current Stage
 * Teams Remaining
-* Eliminated Teams
+* Teams Eliminated
 * Live Goals
-* Countdown to Kickoff
+* Countdown To Kick-Off
 * Days Until Final
 
-### Tournament Records
+## 👟 Player Statistics
 
-* Biggest Win
-* Highest Scoring Match
-* Latest Result
-* Top Scoring Team
-* Best Defence
+Track the race for individual awards:
 
-### Player Statistics
+### Golden Boot
 
 * Top Scorer
 * Top Scorers Table
-* Top Assist
+* Golden Boot Dashboard Cards
+
+### Playmaker Award
+
+* Top Assist Provider
 * Top Assists Table
+
+## 🔥 Tournament Records
+
+* Biggest Win
+* Highest Scoring Match
+* Top Scoring Team
+* Best Defence
+* Latest Result
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots to your repository like this:
-
-```text
-ha-world-cup-2026/
-├── screenshots/
-│   ├── overview.png
-│   ├── golden-boot.png
-│   ├── top-assists.png
-│   ├── knockout-stage.png
-│   └── stats-hub.png
-```
-
-Then display them in this README using:
-
-```markdown
-## Screenshots
+# 📸 Dashboard Screenshots
 
 ### Tournament Overview
 
-![Tournament Overview](screenshots/overview.png)
+Track:
 
-### Golden Boot Race
+* Upcoming Fixtures
+* Live Matches
+* Countdown To Kick-Off
+* Golden Boot Race
+* Top Assists
+* Latest Results
 
-![Golden Boot Race](screenshots/golden-boot.png)
-
-### Top Assists
-
-![Top Assists](screenshots/top-assists.png)
-
-### Knockout Stage
-
-![Knockout Stage](screenshots/knockout-stage.png)
-
-### Stats Hub
-
-![Stats Hub](screenshots/stats-hub.png)
-```
-
-Recommended screenshot size:
-
-```text
-1200 x 800 px
-```
-
-or normal Home Assistant mobile screenshots also work fine.
+![Tournament Overview](screenshots/fixtures-results.png)
 
 ---
 
-## 📦 Installation
+### Group Stage Tables
 
-### HACS
+Monitor every World Cup group in real time.
+
+![Group Stage](screenshots/groups.png)
+
+---
+
+### Knockout Stage Tracker
+
+Follow the road to the Final with knockout stage progress and tournament records.
+
+![Knockout Stage](screenshots/knockout-stages.png)
+
+---
+
+### Statistics Hub
+
+Comprehensive tournament statistics in a single dashboard card.
+
+![Statistics Hub](screenshots/world-cup-stats.png)
+
+---
+
+# 📦 Installation
+
+## HACS Installation
 
 1. Open HACS
-2. Go to **Integrations**
-3. Click the three dots menu
+2. Navigate to **Integrations**
+3. Click the three-dot menu
 4. Select **Custom Repositories**
-5. Add this repository:
+5. Add:
 
 ```text
 https://github.com/Adya84/ha-world-cup-2026
 ```
 
-6. Category: **Integration**
+6. Select **Integration**
 7. Install **World Cup 2026**
 8. Restart Home Assistant
 
 ---
 
-## ⚙️ Configuration
+# ⚙️ Configuration
 
 1. Obtain a free API key from Football-Data.org
-2. Go to:
+2. Open:
 
 ```text
-Settings → Devices & Services → Add Integration
+Settings → Devices & Services
 ```
 
-3. Search for:
+3. Click:
+
+```text
+Add Integration
+```
+
+4. Search for:
 
 ```text
 World Cup 2026
 ```
 
-4. Enter your API key
-5. Submit
+5. Enter your Football-Data API key
+
+6. Complete setup
 
 ---
 
-## 🧩 Available Sensors
+# 🧩 Available Sensors
 
-### Core Sensors
+## Core Sensors
 
 ```text
 sensor.world_cup_fixtures
@@ -198,7 +197,7 @@ sensor.world_cup_tomorrow_matches
 sensor.world_cup_completed_matches
 ```
 
-### Group Sensors
+## Group Sensors
 
 ```text
 sensor.world_cup_group_a
@@ -215,7 +214,7 @@ sensor.world_cup_group_k
 sensor.world_cup_group_l
 ```
 
-### Knockout Stage Sensors
+## Knockout Sensors
 
 ```text
 sensor.world_cup_last_32
@@ -226,32 +225,23 @@ sensor.world_cup_third_place
 sensor.world_cup_final
 ```
 
-### Tournament Statistics Sensors
+## Statistics Sensors
 
 ```text
+sensor.world_cup_total_goals
 sensor.world_cup_total_matches_played
 sensor.world_cup_matches_remaining
 sensor.world_cup_progress
-sensor.world_cup_total_goals
 sensor.world_cup_goals_per_match
-sensor.world_cup_teams_remaining
 sensor.world_cup_current_stage
+sensor.world_cup_teams_remaining
 sensor.world_cup_eliminated_teams
 sensor.world_cup_live_goals
 sensor.world_cup_countdown
 sensor.world_cup_days_until_final
 ```
 
-### Player Statistics Sensors
-
-```text
-sensor.world_cup_top_scorer
-sensor.world_cup_top_scorers
-sensor.world_cup_top_assist
-sensor.world_cup_top_assists
-```
-
-### Tournament Record Sensors
+## Tournament Records
 
 ```text
 sensor.world_cup_biggest_win
@@ -261,60 +251,67 @@ sensor.world_cup_top_scoring_team
 sensor.world_cup_best_defence
 ```
 
----
-
-## 🏠 Example Dashboard Ideas
-
-You can build Home Assistant dashboard cards for:
-
-* 🏆 Tournament Overview
-* ⏳ Countdown to Kickoff
-* 👟 Golden Boot Race
-* 🎯 Top Assists Table
-* 🏆 Golden Boot Podium
-* 📊 World Cup Stats Hub
-* 🔥 Tournament Records
-* 🌍 Group Stage Fixtures
-* 🏆 Knockout Stage Tracker
-* ⚽ Live Match Centre
-* 📰 Latest Result Card
-
----
-
-## ⚠️ State Size Note
-
-The main fixtures sensor limits its fixture attributes to avoid Home Assistant state size issues.
-
-Tournament progress is based on the official World Cup total of:
+## Player Statistics
 
 ```text
-104 matches
+sensor.world_cup_top_scorer
+sensor.world_cup_top_scorers
+sensor.world_cup_top_assist
+sensor.world_cup_top_assists
 ```
 
-This avoids incorrect progress calculations when fixture attributes are limited.
+---
+
+# ⚠️ State Size Optimisation
+
+To avoid Home Assistant state size limitations, the fixtures sensor limits stored match attributes.
+
+Tournament progress calculations use the official World Cup total of:
+
+```text
+104 Matches
+```
+
+ensuring accurate progress tracking throughout the tournament.
 
 ---
 
-## 🔄 Live Updates
+# 🔄 Data Source
 
-Powered by Football-Data.org with automatic updates throughout the FIFA World Cup 2026 tournament.
+Match data and standings are provided by:
 
----
+Football-Data.org
 
-## ✅ Requirements
-
-* Home Assistant 2024.1+
-* HACS
-* Football-Data.org API Key
+Updates occur automatically throughout the tournament.
 
 ---
 
-## ⚠️ Disclaimer
+# 🏆 Support Development
 
-This integration is an independent community project.
+If you enjoy this integration and would like to support future development:
 
-It is not affiliated with FIFA, FIFA World Cup, Home Assistant, HACS or Football-Data.org.
+### 💙 Donate via PayPal
+
+https://paypal.me/graffidoodle
+
+Donations help support:
+
+* New Features
+* Dashboard Enhancements
+* Additional Statistics
+* Tournament Improvements
+* Ongoing Maintenance
+
+Thank you for your support.
 
 ---
 
-Created by **Adrian Apel**.
+# ⚠️ Disclaimer
+
+This project is an independent community integration.
+
+It is not affiliated with FIFA, Football-Data.org, Home Assistant or HACS.
+
+---
+
+Created by **Adrian Apel**
