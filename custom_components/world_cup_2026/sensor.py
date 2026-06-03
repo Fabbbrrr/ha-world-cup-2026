@@ -5,10 +5,7 @@ from .api import WorldCupAPI
 
 async def async_setup_entry(hass, entry, async_add_entities):
     api = WorldCupAPI(entry.data["api_key"])
-
-    async_add_entities([
-        WorldCupFixturesSensor(api)
-    ])
+    async_add_entities([WorldCupFixturesSensor(api)], True)
 
 
 class WorldCupFixturesSensor(SensorEntity):
@@ -26,19 +23,20 @@ class WorldCupFixturesSensor(SensorEntity):
 
         simple_matches = []
 
-        for m in matches[:80]:
+        for m in matches[:40]:
+            home = m.get("homeTeam", {})
+            away = m.get("awayTeam", {})
+            score = m.get("score", {}).get("fullTime", {})
+
             simple_matches.append({
                 "utcDate": m.get("utcDate"),
                 "status": m.get("status"),
                 "stage": m.get("stage"),
                 "group": m.get("group"),
-                "homeTeam": {
-                    "shortName": m.get("homeTeam", {}).get("shortName")
-                },
-                "awayTeam": {
-                    "shortName": m.get("awayTeam", {}).get("shortName")
-                },
-                "score": m.get("score", {})
+                "home": home.get("shortName") or home.get("name"),
+                "away": away.get("shortName") or away.get("name"),
+                "homeScore": score.get("home"),
+                "awayScore": score.get("away")
             })
 
         self._attr_extra_state_attributes = {
