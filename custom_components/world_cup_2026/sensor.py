@@ -5,42 +5,54 @@ from .api import WorldCupAPI
 
 async def async_setup_entry(hass, entry, async_add_entities):
     api = WorldCupAPI(entry.data["api_key"])
-    async_add_entities([WorldCupFixturesSensor(api)], True)
+
+    async_add_entities([
+        WorldCupFixturesSensor(api),
+        WorldCupNextMatchSensor(api)
+    ], True)
 
 
 class WorldCupFixturesSensor(SensorEntity):
     _attr_name = "World Cup Fixtures"
-    _attr_unique_id = "world_cup_2026_fixtures"
+    _attr_unique_id = "world_cup_fixtures"
 
     def __init__(self, api):
         self.api = api
         self._attr_native_value = 0
-        self._attr_extra_state_attributes = {}
 
     async def async_update(self):
         data = await self.api.get_matches()
         matches = data.get("matches", [])
 
-        simple_matches = []
-
-        for m in matches[:40]:
-            home = m.get("homeTeam", {})
-            away = m.get("awayTeam", {})
-            score = m.get("score", {}).get("fullTime", {})
-
-            simple_matches.append({
-                "utcDate": m.get("utcDate"),
-                "status": m.get("status"),
-                "stage": m.get("stage"),
-                "group": m.get("group"),
-                "home": home.get("shortName") or home.get("name"),
-                "away": away.get("shortName") or away.get("name"),
-                "homeScore": score.get("home"),
-                "awayScore": score.get("away")
-            })
-
         self._attr_extra_state_attributes = {
-            "matches": simple_matches
+            "matches": matches[:40]
         }
 
-        self._attr_native_value = len(simple_matches)
+        self._attr_native_value = len(matches)
+
+
+class WorldCupNextMatchSensor(SensorEntity):
+    _attr_name = "World Cup Next Match"
+    _attr_unique_id = "world_cup_next_match"
+
+    def __init__(self, api):
+        self.api = api
+        self._attr_native_value = "Unknown"
+
+    async def async_update(self):
+        data = await self.api.get_matches()
+        matches = data.get("matches", [])
+
+        if matches:
+            match = matches[0]
+
+            home = match.get("home", "TBC")
+            away = match.get("away", "TBC")
+
+            self._attr_native_value = f"{home} v {away}"
+
+            self._attr_extra_state_attributes = {
+                "date": match.get("utcDate"),
+                "status": match.get("status"),
+                "group": match.get("group")
+            }
