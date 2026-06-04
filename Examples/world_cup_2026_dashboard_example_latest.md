@@ -2,7 +2,7 @@
 
 A ready-to-use Home Assistant dashboard example for the **World Cup 2026** custom HACS integration.
 
-This dashboard showcases the full capabilities of the integration including fixtures, standings, knockout stages, player statistics, tournament records and live match tracking.
+This updated version includes the newer dashboard add-ons/cards we built, including fixtures with stadiums, Golden Boot/assist tables, countdown cards, live match tracking, knockout stage cards, tournament records and the full stats hub.
 
 ---
 
@@ -16,15 +16,17 @@ Before importing this dashboard, install the following components.
 
 Used for:
 
-* Neon Borders
-* Glassmorphism Effects
-* Glow Animations
-* Custom Styling
-* Dashboard Visual Enhancements
+* Neon borders
+* Glassmorphism effects
+* Glow animations
+* Custom styling
+* Dashboard visual enhancements
 
 Repository:
 
+```text
 https://github.com/thomasloven/lovelace-card-mod
+```
 
 Install via:
 
@@ -80,41 +82,90 @@ Add your API key when configuring the integration.
 
 ---
 
+# ✅ Updated Dashboard Add-ons Included
+
+### Group Stage
+
+* All 12 groups: Group A to Group L
+* Neon styled tables
+* Position, played, wins, draws, losses, goal difference and points
+
+### Fixtures & Results
+
+* Fixtures & Stadiums card
+* Upcoming matches
+* Kick-off time
+* Stadium / venue display
+* Status icons for scheduled, live, half-time and full-time
+* Latest results
+* Live matches
+* Next kick-off
+
+### Player Stats
+
+* Golden Boot Race
+* Golden Boot Podium
+* Top Assists table
+
+### Tournament Countdown
+
+* Days until kick-off
+* Kick-off imminent state
+* Almost time state
+* One week to go state
+
+### Knockout Stage
+
+* Knockout overview
+* Current stage
+* Teams remaining
+* Eliminated teams calculation
+* Matches remaining
+* Tournament progress card
+* Tournament records card
+
+### Stats Hub
+
+* World Cup stadiums
+* Full tournament stats table
+* Total goals
+* Goals per match
+* Live goals
+* Biggest win
+* Highest scoring match
+* Latest result
+* Top scorer
+* Top assist
+* Top scoring team
+* Best defence
+
+---
+
 # ⚠️ Entity Names
 
-This dashboard assumes the default entity names:
+This dashboard uses these entities:
 
 ```yaml
-sensor.world_cup_fixtures
-sensor.world_cup_standings
-sensor.world_cup_next_match
-sensor.world_cup_live_matches
-sensor.world_cup_today_matches
-sensor.world_cup_tomorrow_matches
-sensor.world_cup_completed_matches
-
-sensor.world_cup_total_goals
-sensor.world_cup_total_matches_played
-sensor.world_cup_matches_remaining
-sensor.world_cup_progress
-sensor.world_cup_goals_per_match
-sensor.world_cup_current_stage
-sensor.world_cup_teams_remaining
-sensor.world_cup_eliminated_teams
-sensor.world_cup_live_goals
-sensor.world_cup_countdown
-sensor.world_cup_days_until_final
-
-sensor.world_cup_top_scorer
-sensor.world_cup_top_scorers
-sensor.world_cup_top_assist
-sensor.world_cup_top_assists
-
+sensor.world_cup_best_defence
 sensor.world_cup_biggest_win
+sensor.world_cup_countdown
+sensor.world_cup_current_stage
+sensor.world_cup_days_until_final
+sensor.world_cup_fixtures
+sensor.world_cup_goals_per_match
 sensor.world_cup_highest_scoring_match
 sensor.world_cup_latest_result
+sensor.world_cup_live_goals
+sensor.world_cup_matches_remaining
+sensor.world_cup_progress
+sensor.world_cup_standings
+sensor.world_cup_top_assist
+sensor.world_cup_top_assists
+sensor.world_cup_top_scorer
+sensor.world_cup_top_scorers
 sensor.world_cup_top_scoring_team
-sensor.world_cup_best_defence
+sensor.world_cup_total_goals
+sensor.world_cup_total_matches_played
 ```
 
 If Home Assistant has renamed your entities, update the YAML before importing.
@@ -124,91 +175,6 @@ Check entity names in:
 ```text
 Settings → Devices & Services → Entities
 ```
-
----
-
-# 📸 Dashboard Preview
-
-### Tournament Overview
-
-![Tournament Overview](screenshots/fixtures-results.png)
-
-### Group Stage Tables
-
-![Group Stage](screenshots/groups.png)
-
-### Knockout Stage
-
-![Knockout Stage](screenshots/knockout-stages.png)
-
-### Statistics Hub
-
-![Statistics Hub](screenshots/world-cup-stats.png)
-
----
-
-# 📦 What This Dashboard Includes
-
-### Fixtures & Results
-
-* Upcoming Fixtures
-* Latest Results
-* Live Matches
-* Next Match
-* Today's Matches
-* Tomorrow's Matches
-
-### Group Stage
-
-* Group A
-* Group B
-* Group C
-* Group D
-* Group E
-* Group F
-* Group G
-* Group H
-* Group I
-* Group J
-* Group K
-* Group L
-
-### Knockout Stages
-
-* Last 32
-* Last 16
-* Quarter Finals
-* Semi Finals
-* Third Place Playoff
-* Final
-
-### Player Statistics
-
-* Golden Boot Race
-* Golden Boot Podium
-* Top Assists Table
-
-### Tournament Statistics
-
-* Tournament Progress
-* Matches Played
-* Matches Remaining
-* Teams Remaining
-* Teams Eliminated
-* Total Goals
-* Goals Per Match
-* Current Stage
-* Live Goals
-* Countdown To Kick-Off
-* Days Until Final
-
-### Tournament Records
-
-* Biggest Win
-* Highest Scoring Match
-* Latest Result
-* Top Scoring Team
-* Best Defence
 
 ---
 
@@ -226,7 +192,7 @@ This avoids Home Assistant state size limitations when fixture attributes are re
 
 # ⚠️ Fixture Attributes
 
-The dashboard uses the simplified fixture attributes provided by the integration:
+The dashboard uses the simplified fixture attributes provided by the integration, including:
 
 ```jinja2
 m.home
@@ -237,9 +203,10 @@ m.status
 m.utcDate
 m.group
 m.stage
+m.venue
 ```
 
-and does not rely on raw Football-Data API fields.
+The dashboard now safely falls back to `TBC` where venue/stadium data is not available.
 
 ---
 
@@ -247,6 +214,7 @@ and does not rely on raw Football-Data API fields.
 
 Copy everything inside the block below into Home Assistant's Raw Configuration Editor.
 
+```yaml
 views:
   - type: sections
     sections:
@@ -869,11 +837,18 @@ views:
             heading_style: title
           - type: markdown
             content: >
-              <h2>📅 Upcoming Fixtures</h2>
+              # 🏟️ Fixtures & Stadiums
 
 
               {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
+
+
+              {% if matches | count == 0 %}
+
+              No fixtures available.
+
+              {% else %}
 
 
               <table>
@@ -881,53 +856,81 @@ views:
                   <th>Date</th>
                   <th>KO</th>
                   <th>Match</th>
-                  <th>Group</th>
-                  <th>Status</th>
+                  <th>Stadium</th>
+                  <th></th>
                 </tr>
 
-                {% for m in matches[:10] %}
-                {% set status = 'Scheduled' if m.status in ['TIMED', 'SCHEDULED'] else 'LIVE' if m.status == 'IN_PLAY' else 'Half Time' if m.status == 'PAUSED' else 'Finished' if m.status == 'FINISHED' else m.status %}
+                {% for m in matches[:20] %}
+                {% set status =
+                  '🕒' if m.status in ['TIMED', 'SCHEDULED']
+                  else '🔴' if m.status == 'IN_PLAY'
+                  else '⏸️' if m.status == 'PAUSED'
+                  else '🏁' if m.status == 'FINISHED'
+                  else '•'
+                %}
                 <tr>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%d %b', true) }}</td>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%H:%M', true) }}</td>
                   <td>{{ m.home }} v {{ m.away }}</td>
-                  <td>{{ m.group | replace('GROUP_', 'Group ') if m.group else '-' }}</td>
+                  <td>{{ m.venue if m.venue is defined else 'TBC' }}</td>
                   <td>{{ status }}</td>
                 </tr>
                 {% endfor %}
               </table>
+
+
+              {% endif %}
+
+              <div style="margin-top:10px; color:#00ffff;">
+                🕒 Scheduled &nbsp;&nbsp;
+                🔴 Live &nbsp;&nbsp;
+                ⏸️ Half Time &nbsp;&nbsp;
+                🏁 Full Time
+              </div>
             card_mod:
               style: |
                 ha-card {
-                  background: rgba(5,14,24,0.45) !important;
-                  border-radius: 22px;
+                  background: rgba(5,14,24,0.45);
                   border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
                   box-shadow: 0 0 20px rgba(0,255,255,0.30);
                   color: white;
                   padding: 14px;
                 }
 
-                h2 {
-                  margin-top: 0;
+                h1 {
                   color: #00ffff;
+                  text-align: center;
+                  margin-top: 0;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
                 }
 
                 table {
                   width: 100%;
                   border-collapse: collapse;
-                  font-size: 13px;
+                  font-size: 12px;
                 }
 
                 th {
                   color: #00ffff;
-                  text-align: left;
-                  padding: 5px;
+                  padding: 6px;
                   border-bottom: 1px solid rgba(0,255,255,0.35);
                 }
 
                 td {
-                  padding: 5px;
-                  border-bottom: 1px solid rgba(255,255,255,0.12);
+                  padding: 6px;
+                  border-bottom: 1px solid rgba(255,255,255,0.10);
+                  text-align: center;
+                }
+
+                td:nth-child(3) {
+                  font-weight: 700;
+                  color: white;
+                }
+
+                td:nth-child(4) {
+                  color: rgba(255,255,255,0.75);
+                  font-size: 11px;
                 }
       - type: grid
         cards:
@@ -1354,22 +1357,46 @@ views:
               style: |
                 ha-card {
                   background: rgba(5,14,24,0.45);
-                  border: 2px solid rgba(0,255,255,0.45);
-                  border-radius: 20px;
-                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
-                  padding: 12px;
+                  border-radius: 22px;
                   color: white;
+                  text-align: center;
+                  padding: 18px;
+                  border: 2px solid rgba(0,255,255,0.65);
+                  box-shadow:
+                    0 0 12px rgba(0,255,255,0.45),
+                    0 0 24px rgba(0,255,255,0.30),
+                    inset 0 0 12px rgba(0,255,255,0.10);
+                  animation: wcCyanGlow 2.5s ease-in-out infinite;
                 }
 
-                h2 {
+                h1 {
                   color: #00ffff;
-                  margin-top: 0;
+                  text-shadow:
+                    0 0 8px rgba(0,255,255,0.9),
+                    0 0 18px rgba(0,255,255,0.55);
                 }
 
-                h3 {
-                  margin: 8px 0;
-                  color: white;
-                  font-weight: 500;
+                @keyframes wcCyanGlow {
+                  0% {
+                    box-shadow:
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
+                  }
+
+                  50% {
+                    box-shadow:
+                      0 0 22px rgba(0,255,255,0.85),
+                      0 0 42px rgba(0,255,255,0.55),
+                      inset 0 0 16px rgba(0,255,255,0.18);
+                  }
+
+                  100% {
+                    box-shadow:
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
+                  }
                 }
       - type: grid
         cards:
@@ -1389,112 +1416,65 @@ views:
               🏆 World Cup starts in
 
 
-              {% if days <= 1 %}
+              # {{ days }} Days
 
-              # <span style="color:#FFD700;">{{ days }}</span> Days
+
+              {% if days <= 1 %}
 
               ## 🏆 KICKOFF IMMINENT 🏆
 
               {% elif days <= 3 %}
 
-              # {{ days }} Days
-
               ## ⚽ Almost Time!
 
               {% elif days <= 7 %}
 
-              # {{ days }} Days
-
               ## 🏟️ One Week To Go
-
-              {% else %}
-
-              # {{ days }} Days
 
               {% endif %}
             card_mod:
               style: |
                 ha-card {
-
-                  {% set kickoff = as_datetime('2026-06-11 20:00:00') %}
-                  {% set days = ((as_timestamp(kickoff) - as_timestamp(now())) / 86400) | int %}
-
                   background: rgba(5,14,24,0.45);
                   border-radius: 22px;
                   color: white;
                   text-align: center;
                   padding: 18px;
-
-                  {% if days <= 1 %}
-                  border: 2px solid rgba(255,215,0,0.95);
-                  animation: wcGoldPulse 1s infinite;
-                  {% elif days <= 3 %}
-                  border: 2px solid rgba(255,140,0,0.9);
-                  animation: wcPulseOrange 2s infinite;
-                  {% elif days <= 7 %}
-                  border: 2px solid rgba(255,215,0,0.75);
-                  animation: wcPulseGoldSlow 3s infinite;
-                  {% else %}
-                  border: 2px solid rgba(0,255,255,0.45);
-                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
-                  {% endif %}
+                  border: 2px solid rgba(0,255,255,0.65);
+                  box-shadow:
+                    0 0 12px rgba(0,255,255,0.45),
+                    0 0 24px rgba(0,255,255,0.30),
+                    inset 0 0 12px rgba(0,255,255,0.10);
+                  animation: wcCyanGlow 2.5s ease-in-out infinite;
                 }
 
-                @keyframes wcGoldPulse {
+                h1 {
+                  color: #00ffff;
+                  text-shadow:
+                    0 0 8px rgba(0,255,255,0.9),
+                    0 0 18px rgba(0,255,255,0.55);
+                }
+
+                @keyframes wcCyanGlow {
                   0% {
                     box-shadow:
-                      0 0 10px rgba(255,215,0,0.4),
-                      0 0 20px rgba(255,215,0,0.4),
-                      inset 0 0 10px rgba(255,215,0,0.2);
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
                   }
 
                   50% {
                     box-shadow:
-                      0 0 25px rgba(255,215,0,1),
-                      0 0 50px rgba(255,215,0,0.9),
-                      0 0 80px rgba(255,215,0,0.7),
-                      inset 0 0 20px rgba(255,215,0,0.4);
+                      0 0 22px rgba(0,255,255,0.85),
+                      0 0 42px rgba(0,255,255,0.55),
+                      inset 0 0 16px rgba(0,255,255,0.18);
                   }
 
                   100% {
                     box-shadow:
-                      0 0 10px rgba(255,215,0,0.4),
-                      0 0 20px rgba(255,215,0,0.4),
-                      inset 0 0 10px rgba(255,215,0,0.2);
-                  }
-                }
-
-                @keyframes wcPulseOrange {
-                  0% {
-                    box-shadow:
-                      0 0 10px rgba(255,140,0,0.4);
-                  }
-
-                  50% {
-                    box-shadow:
-                      0 0 30px rgba(255,140,0,0.9);
-                  }
-
-                  100% {
-                    box-shadow:
-                      0 0 10px rgba(255,140,0,0.4);
-                  }
-                }
-
-                @keyframes wcPulseGoldSlow {
-                  0% {
-                    box-shadow:
-                      0 0 10px rgba(255,215,0,0.25);
-                  }
-
-                  50% {
-                    box-shadow:
-                      0 0 25px rgba(255,215,0,0.75);
-                  }
-
-                  100% {
-                    box-shadow:
-                      0 0 10px rgba(255,215,0,0.25);
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
                   }
                 }
           - type: markdown
@@ -1858,6 +1838,79 @@ views:
       - type: grid
         cards:
           - type: markdown
+            content: |
+              # 🏟️ World Cup Stadiums
+
+              <table width="100%">
+                <tr>
+                  <th>Country</th>
+                  <th>Stadium</th>
+                  <th>City</th>
+                </tr>
+
+                <tr><td>🇺🇸 USA</td><td>MetLife Stadium</td><td>New York/New Jersey</td></tr>
+                <tr><td>🇺🇸 USA</td><td>AT&T Stadium</td><td>Dallas</td></tr>
+                <tr><td>🇺🇸 USA</td><td>SoFi Stadium</td><td>Los Angeles</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Mercedes-Benz Stadium</td><td>Atlanta</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Lincoln Financial Field</td><td>Philadelphia</td></tr>
+                <tr><td>🇺🇸 USA</td><td>NRG Stadium</td><td>Houston</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Hard Rock Stadium</td><td>Miami</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Lumen Field</td><td>Seattle</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Levi's Stadium</td><td>San Francisco</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Arrowhead Stadium</td><td>Kansas City</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Gillette Stadium</td><td>Boston</td></tr>
+
+                <tr><td>🇨🇦 Canada</td><td>BC Place</td><td>Vancouver</td></tr>
+                <tr><td>🇨🇦 Canada</td><td>BMO Field</td><td>Toronto</td></tr>
+
+                <tr><td>🇲🇽 Mexico</td><td>Estadio Azteca</td><td>Mexico City</td></tr>
+                <tr><td>🇲🇽 Mexico</td><td>Estadio BBVA</td><td>Monterrey</td></tr>
+                <tr><td>🇲🇽 Mexico</td><td>Estadio Akron</td><td>Guadalajara</td></tr>
+              </table>
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(5,14,24,0.45);
+                  border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
+                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
+                  color: white;
+                  padding: 14px;
+                }
+
+                h1 {
+                  color: #00ffff;
+                  text-align: center;
+                  margin-top: 0;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
+                }
+
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  font-size: 13px;
+                }
+
+                th {
+                  color: #00ffff;
+                  padding: 8px;
+                  border-bottom: 1px solid rgba(0,255,255,0.35);
+                }
+
+                td {
+                  padding: 6px;
+                  border-bottom: 1px solid rgba(255,255,255,0.08);
+                  text-align: center;
+                }
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+          - type: markdown
             content: >
               # 📊 World Cup Stats Hub
 
@@ -1965,29 +2018,21 @@ views:
                   border-bottom: none;
                 }
     cards: []
-E
+    background:
+      opacity: 60
+      alignment: center
+      size: cover
+      repeat: repeat
+      attachment: fixed
+      image:
+        media_content_id: media-source://image_upload/a25da5ec42604bb131a330b4eeb399c0
+        media_content_type: image/png
+        metadata:
+          title: WorldCupPurple.png
+          thumbnail: /api/image/serve/a25da5ec42604bb131a330b4eeb399c0/256x256
+          media_class: image
+          navigateIds:
+            - {}
+            - media_content_type: app
+              media_content_id: media-source://image_upload
 ```
-
----
-
-# 🏆 Support Development
-
-If you enjoy this integration and would like to support future development:
-
-### 💙 Donate via PayPal
-
-https://paypal.me/graffidoodle
-
-Donations help support:
-
-* New Features
-* Dashboard Enhancements
-* Additional Statistics
-* Tournament Improvements
-* Ongoing Maintenance
-
-Thank you for your support.
-
----
-
-Created by **Adrian Apel**
