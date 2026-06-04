@@ -11,6 +11,154 @@ TOTAL_WORLD_CUP_MATCHES = 104
 TOTAL_WORLD_CUP_TEAMS = 48
 
 
+WORLD_CUP_STADIUMS = [
+    {
+        "stadium": "MetLife Stadium",
+        "city": "New York/New Jersey",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 82500,
+        "note": "Final venue",
+    },
+    {
+        "stadium": "AT&T Stadium",
+        "city": "Dallas",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 80000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "SoFi Stadium",
+        "city": "Los Angeles",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 70000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Mercedes-Benz Stadium",
+        "city": "Atlanta",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 71000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Lincoln Financial Field",
+        "city": "Philadelphia",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 69000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "NRG Stadium",
+        "city": "Houston",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 72000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Hard Rock Stadium",
+        "city": "Miami",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 65000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Lumen Field",
+        "city": "Seattle",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 69000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Levi's Stadium",
+        "city": "San Francisco Bay Area",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 68000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "GEHA Field at Arrowhead Stadium",
+        "city": "Kansas City",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 76000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Gillette Stadium",
+        "city": "Boston",
+        "country": "USA",
+        "flag": "🇺🇸",
+        "capacity": 65000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "BC Place",
+        "city": "Vancouver",
+        "country": "Canada",
+        "flag": "🇨🇦",
+        "capacity": 54500,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "BMO Field",
+        "city": "Toronto",
+        "country": "Canada",
+        "flag": "🇨🇦",
+        "capacity": 45000,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Estadio Azteca",
+        "city": "Mexico City",
+        "country": "Mexico",
+        "flag": "🇲🇽",
+        "capacity": 87000,
+        "note": "Opening match venue",
+    },
+    {
+        "stadium": "Estadio BBVA",
+        "city": "Monterrey",
+        "country": "Mexico",
+        "flag": "🇲🇽",
+        "capacity": 53500,
+        "note": "Host venue",
+    },
+    {
+        "stadium": "Estadio Akron",
+        "city": "Guadalajara",
+        "country": "Mexico",
+        "flag": "🇲🇽",
+        "capacity": 48000,
+        "note": "Host venue",
+    },
+]
+
+
+def get_stadiums():
+    return WORLD_CUP_STADIUMS
+
+
+def get_host_cities():
+    return [
+        {
+            "city": venue["city"],
+            "country": venue["country"],
+            "flag": venue["flag"],
+            "stadium": venue["stadium"],
+        }
+        for venue in WORLD_CUP_STADIUMS
+    ]
+
+
 async def async_setup_entry(hass, entry, async_add_entities):
     api = WorldCupAPI(entry.data["api_key"])
     coordinator = WorldCupCoordinator(hass, api)
@@ -49,6 +197,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
         WorldCupCountdownSensor(coordinator),
         WorldCupDaysUntilFinalSensor(coordinator),
+
+        WorldCupStadiumsSensor(coordinator),
+        WorldCupHostCitiesSensor(coordinator),
+        WorldCupFinalVenueSensor(coordinator),
     ]
 
     for group in [
@@ -875,3 +1027,68 @@ class WorldCupDaysUntilFinalSensor(CoordinatorEntity, SensorEntity):
         now = datetime.now(timezone.utc)
         days = (final_date - now).days
         return max(days, 0)
+
+class WorldCupStadiumsSensor(CoordinatorEntity, SensorEntity):
+    _attr_name = "World Cup Stadiums"
+    _attr_unique_id = "world_cup_stadiums"
+
+    @property
+    def native_value(self):
+        return len(get_stadiums())
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "stadiums": get_stadiums(),
+            "usa_stadiums": [
+                venue for venue in get_stadiums()
+                if venue.get("country") == "USA"
+            ],
+            "canada_stadiums": [
+                venue for venue in get_stadiums()
+                if venue.get("country") == "Canada"
+            ],
+            "mexico_stadiums": [
+                venue for venue in get_stadiums()
+                if venue.get("country") == "Mexico"
+            ],
+        }
+
+
+class WorldCupHostCitiesSensor(CoordinatorEntity, SensorEntity):
+    _attr_name = "World Cup Host Cities"
+    _attr_unique_id = "world_cup_host_cities"
+
+    @property
+    def native_value(self):
+        return len(get_host_cities())
+
+    @property
+    def extra_state_attributes(self):
+        return {"cities": get_host_cities()}
+
+
+class WorldCupFinalVenueSensor(CoordinatorEntity, SensorEntity):
+    _attr_name = "World Cup Final Venue"
+    _attr_unique_id = "world_cup_final_venue"
+
+    @property
+    def native_value(self):
+        final_venue = next(
+            (venue for venue in get_stadiums() if venue.get("stadium") == "MetLife Stadium"),
+            None,
+        )
+
+        if not final_venue:
+            return "Unknown"
+
+        return f"{final_venue['stadium']} - {final_venue['city']}"
+
+    @property
+    def extra_state_attributes(self):
+        final_venue = next(
+            (venue for venue in get_stadiums() if venue.get("stadium") == "MetLife Stadium"),
+            None,
+        )
+
+        return final_venue or {}
