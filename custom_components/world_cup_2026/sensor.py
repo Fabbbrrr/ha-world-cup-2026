@@ -816,24 +816,157 @@ class WorldCupTeamsRemainingSensor(CoordinatorEntity, SensorEntity):
     _attr_name = "World Cup Teams Remaining"
     _attr_unique_id = "world_cup_teams_remaining"
 
+    def _all_teams(self):
+        teams = set()
+
+        # Best source once the API has group tables.
+        for group in get_standings(self.coordinator):
+            for row in group.get("table", []):
+                name = team_name(row.get("team", {}))
+                if name and name != "Unknown":
+                    teams.add(name)
+
+        # Fallback/source before standings are populated.
+        for match in get_matches(self.coordinator):
+            home, away = get_home_away_names(match)
+            if home and home not in ["Unknown", "TBD"]:
+                teams.add(home)
+            if away and away not in ["Unknown", "TBD"]:
+                teams.add(away)
+
+        return teams
+
+    def _team_from_match(self, match, side):
+        team = match.get(f"{side}Team", {})
+        name = team_name(team)
+        return name if name and name not in ["Unknown", "TBD"] else None
+
+    def _winner_loser_from_knockout(self, match):
+        if match.get("status") != "FINISHED":
+            return None, None
+
+        if match.get("stage") == "GROUP_STAGE":
+            return None, None
+
+        home = self._team_from_match(match, "home")
+        away = self._team_from_match(match, "away")
+        if not home or not away:
+            return None, None
+
+        score = match.get("score", {}) or {}
+        winner = score.get("winner")
+
+        if winner == "HOME_TEAM":
+            return home, away
+        if winner == "AWAY_TEAM":
+            return away, home
+
+        # Fallback if the API has no winner field.
+        for key in ["fullTime", "extraTime", "penalties", "regularTime"]:
+            score_block = score.get(key, {}) or {}
+            home_score = score_block.get("home")
+            away_score = score_block.get("away")
+            if home_score is None or away_score is None:
+                continue
+            if home_score > away_score:
+                return home, away
+            if away_score > home_score:
+                return away, home
+
+        return None, None
+
+    def _group_stage_qualified_teams(self):
+        groups = get_standings(self.coordinator)
+        if not groups:
+            return set()
+
+        qualified = set()
+        third_place = []
+
+        for group in groups:
+            table = group.get("table", []) or []
+            if not table:
+                continue
+
+            # Only use group elimination logic once the group looks complete.
+            if not all((row.get("playedGames") or 0) >= 3 for row in table):
+                return set()
+
+            sorted_table = sorted(
+                table,
+                key=lambda row: (
+                    row.get("points") or 0,
+                    row.get("goalDifference") or 0,
+                    row.get("goalsFor") or 0,
+                    -(row.get("goalsAgainst") or 0),
+                ),
+                reverse=True,
+            )
+
+            for row in sorted_table[:2]:
+                name = team_name(row.get("team", {}))
+                if name and name != "Unknown":
+                    qualified.add(name)
+
+            if len(sorted_table) >= 3:
+                third_place.append(sorted_table[2])
+
+        third_place.sort(
+            key=lambda row: (
+                row.get("points") or 0,
+                row.get("goalDifference") or 0,
+                row.get("goalsFor") or 0,
+                -(row.get("goalsAgainst") or 0),
+            ),
+            reverse=True,
+        )
+
+        for row in third_place[:8]:
+            name = team_name(row.get("team", {}))
+            if name and name != "Unknown":
+                qualified.add(name)
+
+        return qualified
+
+    def _remaining_teams(self):
+        all_teams = self._all_teams()
+
+        if not all_teams:
+            return []
+
+        knockout_matches = [
+            match for match in get_matches(self.coordinator)
+            if match.get("stage") and match.get("stage") != "GROUP_STAGE"
+        ]
+
+        eliminated = set()
+        for match in knockout_matches:
+            winner, loser = self._winner_loser_from_knockout(match)
+            if loser:
+                eliminated.add(loser)
+
+        qualified_after_groups = self._group_stage_qualified_teams()
+
+        # Once the group stage has completed but before knockout eliminations,
+        # use the proper 32 qualified teams instead of leaving all 48 active.
+        if qualified_after_groups:
+            remaining = qualified_after_groups - eliminated
+        else:
+            remaining = all_teams - eliminated
+
+        return sorted(remaining)
+
     @property
     def native_value(self):
-        stages = [m.get("stage") for m in get_matches(self.coordinator) if m.get("stage")]
+        return len(self._remaining_teams())
 
-        if any(m.get("stage") == "FINAL" and m.get("status") == "FINISHED" for m in get_matches(self.coordinator)):
-            return 1
-        if "FINAL" in stages:
-            return 2
-        if "SEMI_FINALS" in stages:
-            return 4
-        if "QUARTER_FINALS" in stages:
-            return 8
-        if "LAST_16" in stages:
-            return 16
-        if "LAST_32" in stages:
-            return 32
-
-        return TOTAL_WORLD_CUP_TEAMS
+    @property
+    def extra_state_attributes(self):
+        teams = self._remaining_teams()
+        return {
+            "count": len(teams),
+            "teams": teams,
+        }
 
 
 class WorldCupCurrentStageSensor(CoordinatorEntity, SensorEntity):
