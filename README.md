@@ -1,5 +1,25 @@
 # ⚽ FIFA World Cup 2026 for Home Assistant
 
+# 💙 Support Development
+
+If you enjoy this integration and would like to support future development, please consider making a donation.
+
+## ☕ Donate via PayPal
+
+### 👉 https://paypal.me/graffidoodle
+
+Donations help support:
+
+* New Features
+* Dashboard Enhancements
+* Additional Statistics
+* Tournament Improvements
+* Ongoing Maintenance
+
+Thank you for your support.
+
+---
+
 Live FIFA World Cup 2026 fixtures, standings, groups, knockout stages, player statistics and tournament records directly inside Home Assistant.
 
 Track every match of the 2026 FIFA World Cup from kick-off to the Final with live updates, tournament statistics and custom dashboard cards.
@@ -72,8 +92,6 @@ Track the entire knockout tournament:
 
 ## 👟 Player Statistics
 
-Track the race for individual awards:
-
 ### Golden Boot
 
 * Top Scorer
@@ -92,47 +110,6 @@ Track the race for individual awards:
 * Top Scoring Team
 * Best Defence
 * Latest Result
-
----
-
-# 📸 Dashboard Screenshots
-
-### Tournament Overview
-
-Track:
-
-* Upcoming Fixtures
-* Live Matches
-* Countdown To Kick-Off
-* Golden Boot Race
-* Top Assists
-* Latest Results
-
-![Tournament Overview](screenshots/fixtures-results.png)
-
----
-
-### Group Stage Tables
-
-Monitor every World Cup group in real time.
-
-![Group Stage](screenshots/groups.png)
-
----
-
-### Knockout Stage Tracker
-
-Follow the road to the Final with knockout stage progress and tournament records.
-
-![Knockout Stage](screenshots/knockout-stages.png)
-
----
-
-### Statistics Hub
-
-Comprehensive tournament statistics in a single dashboard card.
-
-![Statistics Hub](screenshots/world-cup-stats.png)
 
 ---
 
@@ -178,7 +155,6 @@ World Cup 2026
 ```
 
 5. Enter your Football-Data API key
-
 6. Complete setup
 
 ---
@@ -283,26 +259,6 @@ Match data and standings are provided by:
 Football-Data.org
 
 Updates occur automatically throughout the tournament.
-
----
-
-# 🏆 Support Development
-
-If you enjoy this integration and would like to support future development:
-
-### 💙 Donate via PayPal
-
-https://paypal.me/graffidoodle
-
-Donations help support:
-
-* New Features
-* Dashboard Enhancements
-* Additional Statistics
-* Tournament Improvements
-* Ongoing Maintenance
-
-Thank you for your support.
 
 ---
 
