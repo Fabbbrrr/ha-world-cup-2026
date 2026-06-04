@@ -620,11 +620,18 @@ views:
             heading_style: title
           - type: markdown
             content: >
-              <h2>📅 Upcoming Fixtures</h2>
+              # 🏟️ Fixtures & Stadiums
 
 
               {% set matches = state_attr('sensor.world_cup_fixtures',
               'matches') or [] %}
+
+
+              {% if matches | count == 0 %}
+
+              No fixtures available.
+
+              {% else %}
 
 
               <table>
@@ -632,53 +639,81 @@ views:
                   <th>Date</th>
                   <th>KO</th>
                   <th>Match</th>
-                  <th>Group</th>
-                  <th>Status</th>
+                  <th>Stadium</th>
+                  <th></th>
                 </tr>
 
-                {% for m in matches[:10] %}
-                {% set status = 'Scheduled' if m.status in ['TIMED', 'SCHEDULED'] else 'LIVE' if m.status == 'IN_PLAY' else 'Half Time' if m.status == 'PAUSED' else 'Finished' if m.status == 'FINISHED' else m.status %}
+                {% for m in matches[:20] %}
+                {% set status =
+                  '🕒' if m.status in ['TIMED', 'SCHEDULED']
+                  else '🔴' if m.status == 'IN_PLAY'
+                  else '⏸️' if m.status == 'PAUSED'
+                  else '🏁' if m.status == 'FINISHED'
+                  else '•'
+                %}
                 <tr>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%d %b', true) }}</td>
                   <td>{{ as_timestamp(m.utcDate) | timestamp_custom('%H:%M', true) }}</td>
                   <td>{{ m.home }} v {{ m.away }}</td>
-                  <td>{{ m.group | replace('GROUP_', 'Group ') if m.group else '-' }}</td>
+                  <td>{{ m.venue if m.venue is defined else 'TBC' }}</td>
                   <td>{{ status }}</td>
                 </tr>
                 {% endfor %}
               </table>
+
+
+              {% endif %}
+
+              <div style="margin-top:10px; color:#00ffff;">
+                🕒 Scheduled &nbsp;&nbsp;
+                🔴 Live &nbsp;&nbsp;
+                ⏸️ Half Time &nbsp;&nbsp;
+                🏁 Full Time
+              </div>
             card_mod:
               style: |
                 ha-card {
-                  background: rgba(5,14,24,0.45) !important;
-                  border-radius: 22px;
+                  background: rgba(5,14,24,0.45);
                   border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
                   box-shadow: 0 0 20px rgba(0,255,255,0.30);
                   color: white;
                   padding: 14px;
                 }
 
-                h2 {
-                  margin-top: 0;
+                h1 {
                   color: #00ffff;
+                  text-align: center;
+                  margin-top: 0;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
                 }
 
                 table {
                   width: 100%;
                   border-collapse: collapse;
-                  font-size: 13px;
+                  font-size: 12px;
                 }
 
                 th {
                   color: #00ffff;
-                  text-align: left;
-                  padding: 5px;
+                  padding: 6px;
                   border-bottom: 1px solid rgba(0,255,255,0.35);
                 }
 
                 td {
-                  padding: 5px;
-                  border-bottom: 1px solid rgba(255,255,255,0.12);
+                  padding: 6px;
+                  border-bottom: 1px solid rgba(255,255,255,0.10);
+                  text-align: center;
+                }
+
+                td:nth-child(3) {
+                  font-weight: 700;
+                  color: white;
+                }
+
+                td:nth-child(4) {
+                  color: rgba(255,255,255,0.75);
+                  font-size: 11px;
                 }
       - type: grid
         cards:
@@ -1105,22 +1140,46 @@ views:
               style: |
                 ha-card {
                   background: rgba(5,14,24,0.45);
-                  border: 2px solid rgba(0,255,255,0.45);
-                  border-radius: 20px;
-                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
-                  padding: 12px;
+                  border-radius: 22px;
                   color: white;
+                  text-align: center;
+                  padding: 18px;
+                  border: 2px solid rgba(0,255,255,0.65);
+                  box-shadow:
+                    0 0 12px rgba(0,255,255,0.45),
+                    0 0 24px rgba(0,255,255,0.30),
+                    inset 0 0 12px rgba(0,255,255,0.10);
+                  animation: wcCyanGlow 2.5s ease-in-out infinite;
                 }
 
-                h2 {
+                h1 {
                   color: #00ffff;
-                  margin-top: 0;
+                  text-shadow:
+                    0 0 8px rgba(0,255,255,0.9),
+                    0 0 18px rgba(0,255,255,0.55);
                 }
 
-                h3 {
-                  margin: 8px 0;
-                  color: white;
-                  font-weight: 500;
+                @keyframes wcCyanGlow {
+                  0% {
+                    box-shadow:
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
+                  }
+
+                  50% {
+                    box-shadow:
+                      0 0 22px rgba(0,255,255,0.85),
+                      0 0 42px rgba(0,255,255,0.55),
+                      inset 0 0 16px rgba(0,255,255,0.18);
+                  }
+
+                  100% {
+                    box-shadow:
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
+                  }
                 }
       - type: grid
         cards:
@@ -1140,112 +1199,65 @@ views:
               🏆 World Cup starts in
 
 
-              {% if days <= 1 %}
+              # {{ days }} Days
 
-              # <span style="color:#FFD700;">{{ days }}</span> Days
+
+              {% if days <= 1 %}
 
               ## 🏆 KICKOFF IMMINENT 🏆
 
               {% elif days <= 3 %}
 
-              # {{ days }} Days
-
               ## ⚽ Almost Time!
 
               {% elif days <= 7 %}
 
-              # {{ days }} Days
-
               ## 🏟️ One Week To Go
-
-              {% else %}
-
-              # {{ days }} Days
 
               {% endif %}
             card_mod:
               style: |
                 ha-card {
-
-                  {% set kickoff = as_datetime('2026-06-11 20:00:00') %}
-                  {% set days = ((as_timestamp(kickoff) - as_timestamp(now())) / 86400) | int %}
-
                   background: rgba(5,14,24,0.45);
                   border-radius: 22px;
                   color: white;
                   text-align: center;
                   padding: 18px;
-
-                  {% if days <= 1 %}
-                  border: 2px solid rgba(255,215,0,0.95);
-                  animation: wcGoldPulse 1s infinite;
-                  {% elif days <= 3 %}
-                  border: 2px solid rgba(255,140,0,0.9);
-                  animation: wcPulseOrange 2s infinite;
-                  {% elif days <= 7 %}
-                  border: 2px solid rgba(255,215,0,0.75);
-                  animation: wcPulseGoldSlow 3s infinite;
-                  {% else %}
-                  border: 2px solid rgba(0,255,255,0.45);
-                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
-                  {% endif %}
+                  border: 2px solid rgba(0,255,255,0.65);
+                  box-shadow:
+                    0 0 12px rgba(0,255,255,0.45),
+                    0 0 24px rgba(0,255,255,0.30),
+                    inset 0 0 12px rgba(0,255,255,0.10);
+                  animation: wcCyanGlow 2.5s ease-in-out infinite;
                 }
 
-                @keyframes wcGoldPulse {
+                h1 {
+                  color: #00ffff;
+                  text-shadow:
+                    0 0 8px rgba(0,255,255,0.9),
+                    0 0 18px rgba(0,255,255,0.55);
+                }
+
+                @keyframes wcCyanGlow {
                   0% {
                     box-shadow:
-                      0 0 10px rgba(255,215,0,0.4),
-                      0 0 20px rgba(255,215,0,0.4),
-                      inset 0 0 10px rgba(255,215,0,0.2);
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
                   }
 
                   50% {
                     box-shadow:
-                      0 0 25px rgba(255,215,0,1),
-                      0 0 50px rgba(255,215,0,0.9),
-                      0 0 80px rgba(255,215,0,0.7),
-                      inset 0 0 20px rgba(255,215,0,0.4);
+                      0 0 22px rgba(0,255,255,0.85),
+                      0 0 42px rgba(0,255,255,0.55),
+                      inset 0 0 16px rgba(0,255,255,0.18);
                   }
 
                   100% {
                     box-shadow:
-                      0 0 10px rgba(255,215,0,0.4),
-                      0 0 20px rgba(255,215,0,0.4),
-                      inset 0 0 10px rgba(255,215,0,0.2);
-                  }
-                }
-
-                @keyframes wcPulseOrange {
-                  0% {
-                    box-shadow:
-                      0 0 10px rgba(255,140,0,0.4);
-                  }
-
-                  50% {
-                    box-shadow:
-                      0 0 30px rgba(255,140,0,0.9);
-                  }
-
-                  100% {
-                    box-shadow:
-                      0 0 10px rgba(255,140,0,0.4);
-                  }
-                }
-
-                @keyframes wcPulseGoldSlow {
-                  0% {
-                    box-shadow:
-                      0 0 10px rgba(255,215,0,0.25);
-                  }
-
-                  50% {
-                    box-shadow:
-                      0 0 25px rgba(255,215,0,0.75);
-                  }
-
-                  100% {
-                    box-shadow:
-                      0 0 10px rgba(255,215,0,0.25);
+                      0 0 10px rgba(0,255,255,0.30),
+                      0 0 20px rgba(0,255,255,0.20),
+                      inset 0 0 8px rgba(0,255,255,0.08);
                   }
                 }
           - type: markdown
@@ -1609,6 +1621,79 @@ views:
       - type: grid
         cards:
           - type: markdown
+            content: |
+              # 🏟️ World Cup Stadiums
+
+              <table width="100%">
+                <tr>
+                  <th>Country</th>
+                  <th>Stadium</th>
+                  <th>City</th>
+                </tr>
+
+                <tr><td>🇺🇸 USA</td><td>MetLife Stadium</td><td>New York/New Jersey</td></tr>
+                <tr><td>🇺🇸 USA</td><td>AT&T Stadium</td><td>Dallas</td></tr>
+                <tr><td>🇺🇸 USA</td><td>SoFi Stadium</td><td>Los Angeles</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Mercedes-Benz Stadium</td><td>Atlanta</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Lincoln Financial Field</td><td>Philadelphia</td></tr>
+                <tr><td>🇺🇸 USA</td><td>NRG Stadium</td><td>Houston</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Hard Rock Stadium</td><td>Miami</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Lumen Field</td><td>Seattle</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Levi's Stadium</td><td>San Francisco</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Arrowhead Stadium</td><td>Kansas City</td></tr>
+                <tr><td>🇺🇸 USA</td><td>Gillette Stadium</td><td>Boston</td></tr>
+
+                <tr><td>🇨🇦 Canada</td><td>BC Place</td><td>Vancouver</td></tr>
+                <tr><td>🇨🇦 Canada</td><td>BMO Field</td><td>Toronto</td></tr>
+
+                <tr><td>🇲🇽 Mexico</td><td>Estadio Azteca</td><td>Mexico City</td></tr>
+                <tr><td>🇲🇽 Mexico</td><td>Estadio BBVA</td><td>Monterrey</td></tr>
+                <tr><td>🇲🇽 Mexico</td><td>Estadio Akron</td><td>Guadalajara</td></tr>
+              </table>
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(5,14,24,0.45);
+                  border: 2px solid rgba(0,255,255,0.45);
+                  border-radius: 22px;
+                  box-shadow: 0 0 20px rgba(0,255,255,0.30);
+                  color: white;
+                  padding: 14px;
+                }
+
+                h1 {
+                  color: #00ffff;
+                  text-align: center;
+                  margin-top: 0;
+                  text-shadow: 0 0 10px rgba(0,255,255,0.7);
+                }
+
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  font-size: 13px;
+                }
+
+                th {
+                  color: #00ffff;
+                  padding: 8px;
+                  border-bottom: 1px solid rgba(0,255,255,0.35);
+                }
+
+                td {
+                  padding: 6px;
+                  border-bottom: 1px solid rgba(255,255,255,0.08);
+                  text-align: center;
+                }
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+          - type: markdown
             content: >
               # 📊 World Cup Stats Hub
 
@@ -1716,3 +1801,20 @@ views:
                   border-bottom: none;
                 }
     cards: []
+    background:
+      opacity: 60
+      alignment: center
+      size: cover
+      repeat: repeat
+      attachment: fixed
+      image:
+        media_content_id: media-source://image_upload/a25da5ec42604bb131a330b4eeb399c0
+        media_content_type: image/png
+        metadata:
+          title: WorldCupPurple.png
+          thumbnail: /api/image/serve/a25da5ec42604bb131a330b4eeb399c0/256x256
+          media_class: image
+          navigateIds:
+            - {}
+            - media_content_type: app
+              media_content_id: media-source://image_upload
