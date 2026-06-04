@@ -159,6 +159,179 @@ def get_host_cities():
     ]
 
 
+def normalize_team_name(name):
+    if not name:
+        return ""
+
+    replacements = {
+        "Korea Republic": "South Korea",
+        "Bosnia-H.": "Bosnia and Herzegovina",
+        "Bosnia & Herz": "Bosnia and Herzegovina",
+        "Bosnia Herzegovina": "Bosnia and Herzegovina",
+        "Turkey": "Türkiye",
+        "Turkiye": "Türkiye",
+        "Curacao": "Curaçao",
+        "Curaçao": "Curaçao",
+    }
+
+    clean = str(name).strip()
+    clean = replacements.get(clean, clean)
+    return clean.lower().replace("ç", "c").replace("ü", "u").replace("í", "i").replace("é", "e")
+
+
+def match_key(home, away):
+    return f"{normalize_team_name(home)} v {normalize_team_name(away)}"
+
+
+MATCH_VENUES = {
+    # Group stage - Matchday 1
+    match_key("Mexico", "South Africa"): "Estadio Azteca",
+    match_key("South Korea", "Czechia"): "Estadio Akron",
+    match_key("Canada", "Bosnia and Herzegovina"): "BMO Field",
+    match_key("USA", "Paraguay"): "SoFi Stadium",
+    match_key("Haiti", "Scotland"): "Gillette Stadium",
+    match_key("Australia", "Türkiye"): "BC Place",
+    match_key("Brazil", "Morocco"): "MetLife Stadium",
+    match_key("Qatar", "Switzerland"): "Levi's Stadium",
+    match_key("Ivory Coast", "Ecuador"): "Lincoln Financial Field",
+    match_key("Germany", "Curaçao"): "NRG Stadium",
+    match_key("Netherlands", "Japan"): "AT&T Stadium",
+    match_key("Sweden", "Tunisia"): "Estadio BBVA",
+    match_key("Spain", "Cape Verde"): "Mercedes-Benz Stadium",
+    match_key("Saudi Arabia", "Uruguay"): "Hard Rock Stadium",
+    match_key("Belgium", "Egypt"): "Lumen Field",
+    match_key("Iran", "New Zealand"): "SoFi Stadium",
+    match_key("France", "Senegal"): "MetLife Stadium",
+    match_key("Iraq", "Norway"): "Gillette Stadium",
+    match_key("Argentina", "Algeria"): "GEHA Field at Arrowhead Stadium",
+    match_key("Austria", "Jordan"): "Levi's Stadium",
+    match_key("England", "Croatia"): "AT&T Stadium",
+    match_key("Ghana", "Panama"): "BMO Field",
+    match_key("Portugal", "Congo DR"): "NRG Stadium",
+    match_key("Uzbekistan", "Colombia"): "Estadio Azteca",
+
+    # Group stage - Matchday 2
+    match_key("Czechia", "South Africa"): "Mercedes-Benz Stadium",
+    match_key("Switzerland", "Bosnia and Herzegovina"): "SoFi Stadium",
+    match_key("Canada", "Qatar"): "BC Place",
+    match_key("Mexico", "South Korea"): "Estadio Akron",
+    match_key("Brazil", "Haiti"): "Lincoln Financial Field",
+    match_key("Scotland", "Morocco"): "Gillette Stadium",
+    match_key("Türkiye", "Paraguay"): "Levi's Stadium",
+    match_key("USA", "Australia"): "Lumen Field",
+    match_key("Germany", "Ivory Coast"): "BMO Field",
+    match_key("Ecuador", "Curaçao"): "GEHA Field at Arrowhead Stadium",
+    match_key("Netherlands", "Sweden"): "NRG Stadium",
+    match_key("Tunisia", "Japan"): "Estadio BBVA",
+    match_key("Spain", "Saudi Arabia"): "Mercedes-Benz Stadium",
+    match_key("Uruguay", "Cape Verde"): "Hard Rock Stadium",
+    match_key("Belgium", "Iran"): "SoFi Stadium",
+    match_key("New Zealand", "Egypt"): "BC Place",
+    match_key("France", "Iraq"): "Lincoln Financial Field",
+    match_key("Norway", "Senegal"): "MetLife Stadium",
+    match_key("Argentina", "Austria"): "AT&T Stadium",
+    match_key("Jordan", "Algeria"): "Levi's Stadium",
+    match_key("England", "Ghana"): "Gillette Stadium",
+    match_key("Panama", "Croatia"): "BMO Field",
+    match_key("Portugal", "Uzbekistan"): "NRG Stadium",
+    match_key("Colombia", "Congo DR"): "Estadio Akron",
+
+    # Group stage - Matchday 3
+    match_key("Scotland", "Brazil"): "Hard Rock Stadium",
+    match_key("Morocco", "Haiti"): "Mercedes-Benz Stadium",
+    match_key("Canada", "Switzerland"): "BC Place",
+    match_key("Bosnia and Herzegovina", "Qatar"): "Lumen Field",
+    match_key("Mexico", "Czechia"): "Estadio Azteca",
+    match_key("South Korea", "South Africa"): "Estadio BBVA",
+    match_key("Ecuador", "Germany"): "MetLife Stadium",
+    match_key("Curaçao", "Ivory Coast"): "Lincoln Financial Field",
+    match_key("Tunisia", "Netherlands"): "GEHA Field at Arrowhead Stadium",
+    match_key("Japan", "Sweden"): "AT&T Stadium",
+    match_key("USA", "Türkiye"): "SoFi Stadium",
+    match_key("Paraguay", "Australia"): "Levi's Stadium",
+    match_key("Norway", "France"): "Gillette Stadium",
+    match_key("Senegal", "Iraq"): "BMO Field",
+    match_key("New Zealand", "Belgium"): "BC Place",
+    match_key("Egypt", "Iran"): "Lumen Field",
+    match_key("Uruguay", "Spain"): "Estadio Akron",
+    match_key("Cape Verde", "Saudi Arabia"): "NRG Stadium",
+    match_key("Panama", "England"): "MetLife Stadium",
+    match_key("Croatia", "Ghana"): "Lincoln Financial Field",
+    match_key("Jordan", "Argentina"): "AT&T Stadium",
+    match_key("Algeria", "Austria"): "GEHA Field at Arrowhead Stadium",
+    match_key("Colombia", "Portugal"): "Hard Rock Stadium",
+    match_key("Congo DR", "Uzbekistan"): "Mercedes-Benz Stadium",
+}
+
+
+MATCH_NUMBER_VENUES = {
+    73: "SoFi Stadium",
+    74: "Gillette Stadium",
+    75: "Estadio BBVA",
+    76: "NRG Stadium",
+    77: "MetLife Stadium",
+    78: "AT&T Stadium",
+    79: "Estadio Azteca",
+    80: "Mercedes-Benz Stadium",
+    81: "Levi's Stadium",
+    82: "Lumen Field",
+    83: "BMO Field",
+    84: "SoFi Stadium",
+    85: "BC Place",
+    86: "Hard Rock Stadium",
+    87: "GEHA Field at Arrowhead Stadium",
+    88: "AT&T Stadium",
+    89: "Lincoln Financial Field",
+    90: "NRG Stadium",
+    91: "MetLife Stadium",
+    92: "Estadio Azteca",
+    93: "AT&T Stadium",
+    94: "Lumen Field",
+    95: "Mercedes-Benz Stadium",
+    96: "BC Place",
+    97: "Gillette Stadium",
+    98: "SoFi Stadium",
+    99: "Hard Rock Stadium",
+    100: "GEHA Field at Arrowhead Stadium",
+    101: "AT&T Stadium",
+    102: "Mercedes-Benz Stadium",
+    103: "Hard Rock Stadium",
+    104: "MetLife Stadium",
+}
+
+
+def get_stadium_details(stadium_name):
+    if not stadium_name:
+        return None
+
+    return next(
+        (venue for venue in WORLD_CUP_STADIUMS if venue.get("stadium") == stadium_name),
+        None,
+    )
+
+
+def get_match_venue(home, away, match_number=None):
+    stadium_name = MATCH_VENUES.get(match_key(home, away))
+
+    if stadium_name is None:
+        stadium_name = MATCH_VENUES.get(match_key(away, home))
+
+    if stadium_name is None and match_number:
+        stadium_name = MATCH_NUMBER_VENUES.get(match_number)
+
+    details = get_stadium_details(stadium_name)
+
+    if details:
+        return details
+
+    return {
+        "stadium": stadium_name or "TBC",
+        "city": "TBC",
+        "country": "TBC",
+        "flag": "",
+    }
+
+
 async def async_setup_entry(hass, entry, async_add_entities):
     api = WorldCupAPI(entry.data["api_key"])
     coordinator = WorldCupCoordinator(hass, api)
@@ -235,18 +408,27 @@ def get_scorers(coordinator):
     return coordinator.data.get("scorers", []) if coordinator.data else []
 
 
-def format_match(m):
+def format_match(m, match_number=None):
     home = m.get("homeTeam", {})
     away = m.get("awayTeam", {})
     score = m.get("score", {}).get("fullTime", {})
 
+    home_name = home.get("shortName") or home.get("name") or "TBD"
+    away_name = away.get("shortName") or away.get("name") or "TBD"
+    venue = get_match_venue(home_name, away_name, match_number)
+
     return {
+        "matchNumber": match_number,
         "utcDate": m.get("utcDate"),
         "status": m.get("status"),
         "stage": m.get("stage"),
         "group": m.get("group"),
-        "home": home.get("shortName") or home.get("name") or "TBD",
-        "away": away.get("shortName") or away.get("name") or "TBD",
+        "venue": venue.get("stadium"),
+        "venueCity": venue.get("city"),
+        "venueCountry": venue.get("country"),
+        "venueFlag": venue.get("flag"),
+        "home": home_name,
+        "away": away_name,
         "homeScore": score.get("home"),
         "awayScore": score.get("away"),
     }
@@ -373,7 +555,16 @@ class WorldCupFixturesSensor(CoordinatorEntity, SensorEntity):
     @property
     def extra_state_attributes(self):
         # Keep attributes limited so Home Assistant does not overload the state machine.
-        return {"matches": [format_match(m) for m in get_matches(self.coordinator)[:40]]}
+        matches = sorted(
+            get_matches(self.coordinator),
+            key=lambda m: parse_date(m) or datetime.max.replace(tzinfo=timezone.utc),
+        )
+        return {
+            "matches": [
+                format_match(m, index + 1)
+                for index, m in enumerate(matches[:40])
+            ]
+        }
 
 
 class WorldCupStandingsSensor(CoordinatorEntity, SensorEntity):
