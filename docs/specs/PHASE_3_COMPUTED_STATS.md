@@ -1,9 +1,9 @@
 # Phase 3 — Computed Betting & Stats Sensors
 
-> **Status:** TODO  
+> **Status:** DONE  
 > **Depends on:** Phase 1 complete, Phase 2 recommended (fixtures include halfTime scores)  
-> **Files to modify:** `sensor.py` only  
-> **Files to read first:** `DEVELOPMENT.md` (Sections 4, 7), `specs/PHASE_2_ENRICH_SENSORS.md`
+> **Files modified:** `sensor.py`  
+> **Files to read first:** `docs/DEVELOPMENT.md` (Sections 4, 7), `docs/specs/PHASE_2_ENRICH_SENSORS.md`
 
 ---
 
