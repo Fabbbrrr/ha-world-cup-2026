@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .api import WorldCupAPI
+from .const import DOMAIN
 from .coordinator import WorldCupCoordinator
 
 
@@ -333,10 +333,8 @@ def get_match_venue(home, away, match_number=None):
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    api = WorldCupAPI(entry.data["api_key"])
-    coordinator = WorldCupCoordinator(hass, api)
-
-    await coordinator.async_config_entry_first_refresh()
+    """Set up sensors from the coordinator stored by __init__.py."""
+    coordinator: WorldCupCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     sensors = [
         WorldCupFixturesSensor(coordinator),

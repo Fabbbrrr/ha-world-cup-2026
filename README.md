@@ -124,7 +124,7 @@ Track the entire knockout tournament:
 5. Add:
 
 ```text
-https://github.com/Adya84/ha-world-cup-2026
+https://github.com/Fabbbrrr/ha-world-cup-2026
 ```
 
 6. Select **Integration**
@@ -156,6 +156,18 @@ World Cup 2026
 
 5. Enter your Football-Data API key
 6. Complete setup
+
+---
+
+# 🧪 Demo Mode
+
+If you want to explore the integration and build dashboards before the tournament starts (or when no live matches are available), you can enable **Demo mode**:
+
+1. Go to **Settings → Devices & Services → World Cup 2026 → Configure**
+2. Toggle **Demo mode** on
+3. Click **Submit** — the integration reloads automatically
+
+Demo mode loads pre-built fixture data locally instead of calling the API. All sensors populate with realistic tournament data so you can design and test your dashboards immediately. Turn it off the same way when you want live data.
 
 ---
 
@@ -270,4 +282,6 @@ It is not affiliated with FIFA, Football-Data.org, Home Assistant or HACS.
 
 ---
 
-Created by **Adrian Apel**
+Originally created by **Adrian Apel** ([@Adya84](https://github.com/Adya84/ha-world-cup-2026)).
+
+Forked and maintained by **[@Fabbbrrr](https://github.com/Fabbbrrr)**.
