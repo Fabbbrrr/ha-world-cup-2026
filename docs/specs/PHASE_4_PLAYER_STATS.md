@@ -1,9 +1,9 @@
 # Phase 4 — Enhanced Player Statistics Sensors
 
-> **Status:** TODO  
+> **Status:** DONE  
 > **Depends on:** Phase 1 complete (scorers endpoint must be fetched)  
-> **Files to modify:** `sensor.py` only  
-> **Files to read first:** `DEVELOPMENT.md` (Sections 4, 7), `specs/PHASE_1_BUG_FIXES.md`
+> **Files modified:** `sensor.py`  
+> **Files to read first:** `docs/DEVELOPMENT.md` (Sections 4, 7), `docs/specs/PHASE_1_BUG_FIXES.md`
 
 ---
 

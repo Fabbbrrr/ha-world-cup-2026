@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import date, datetime, timezone, timedelta
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -378,6 +378,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
         WorldCupExtraTimeSensor(coordinator),
         WorldCupPenaltyShootoutSensor(coordinator),
 
+        # Phase 4 additions
+        WorldCupTopScorerNoPenSensor(coordinator),
+        WorldCupGoalContributionsSensor(coordinator),
+        WorldCupPenaltyGoalsSensor(coordinator),
+
         # Phase 3 additions
         WorldCupBttsRateSensor(coordinator),
         WorldCupOver25Sensor(coordinator),
@@ -455,20 +460,41 @@ def format_match(m, match_number=None):
     }
 
 
-def format_scorer(s):
-    player = s.get("player", {})
-    team = s.get("team", {})
+def format_scorer(s: dict) -> dict:
+    player = s.get("player") or {}
+    team = s.get("team") or {}
+
+    goals = s.get("goals") or 0
+    assists = s.get("assists") or 0
+    penalties = s.get("penalties") or 0
+    non_pen_goals = max(goals - penalties, 0)
+
+    dob = player.get("dateOfBirth")
+    age = None
+    if dob:
+        try:
+            born = date.fromisoformat(dob)
+            today = date.today()
+            age = today.year - born.year - (
+                (today.month, today.day) < (born.month, born.day)
+            )
+        except (ValueError, TypeError):
+            age = None
 
     return {
         "name": player.get("name") or "Unknown",
         "firstName": player.get("firstName"),
         "lastName": player.get("lastName"),
-        "dateOfBirth": player.get("dateOfBirth"),
+        "dateOfBirth": dob,
+        "age": age,                          # computed from dateOfBirth; None if unavailable
         "nationality": player.get("nationality"),
+        "position": player.get("position"),  # e.g. "Attacker", "Midfielder"
         "team": team.get("shortName") or team.get("name") or "Unknown",
-        "goals": s.get("goals") or 0,
-        "assists": s.get("assists") or 0,
-        "penalties": s.get("penalties") or 0,
+        "goals": goals,
+        "assists": assists,
+        "penalties": penalties,
+        "nonPenaltyGoals": non_pen_goals,    # goals - penalties (never negative)
+        "goalContributions": goals + assists, # G+A combined
     }
 
 
@@ -1470,6 +1496,102 @@ class WorldCupHostCitiesSensor(CoordinatorEntity, SensorEntity):
     @property
     def extra_state_attributes(self):
         return {"cities": get_host_cities()}
+
+
+class WorldCupTopScorerNoPenSensor(CoordinatorEntity, SensorEntity):
+    """
+    Top scorer by non-penalty goals (total goals minus penalty goals).
+    Players with 0 non-penalty goals are excluded — this ranks pure goalscorers,
+    not penalty specialists.
+    """
+
+    _attr_unique_id = "world_cup_top_scorer_no_pen"
+    _attr_name = "World Cup Top Scorer (No Penalties)"
+
+    def _ranked(self) -> list:
+        scorers = [format_scorer(s) for s in get_scorers(self.coordinator)]
+        scorers = [s for s in scorers if s["nonPenaltyGoals"] > 0]
+        scorers.sort(
+            key=lambda x: (x["nonPenaltyGoals"], x["goals"]),
+            reverse=True,
+        )
+        return scorers
+
+    @property
+    def native_value(self) -> str:
+        ranked = self._ranked()
+        if not ranked:
+            return "No scorers yet"
+        top = ranked[0]
+        return f"{top['name']} - {top['nonPenaltyGoals']} goals (excl. pens)"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"scorers": self._ranked()[:20]}
+
+
+class WorldCupGoalContributionsSensor(CoordinatorEntity, SensorEntity):
+    """
+    Goal contributions (Goals + Assists) leaderboard.
+    Tiebreak: goals first, then assists.
+    Only players with at least 1 goal or 1 assist are included.
+    """
+
+    _attr_unique_id = "world_cup_goal_contributions"
+    _attr_name = "World Cup Goal Contributions"
+
+    def _ranked(self) -> list:
+        scorers = [format_scorer(s) for s in get_scorers(self.coordinator)]
+        scorers = [s for s in scorers if s["goalContributions"] > 0]
+        scorers.sort(
+            key=lambda x: (x["goalContributions"], x["goals"], x["assists"]),
+            reverse=True,
+        )
+        return scorers
+
+    @property
+    def native_value(self) -> str:
+        ranked = self._ranked()
+        if not ranked:
+            return "No data yet"
+        top = ranked[0]
+        return f"{top['name']} - {top['goalContributions']} (G+A)"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"players": self._ranked()[:20]}
+
+
+class WorldCupPenaltyGoalsSensor(CoordinatorEntity, SensorEntity):
+    """
+    Total penalty goals scored in the tournament.
+    Attributes include per-player breakdown and penalty % of all goals.
+    """
+
+    _attr_unique_id = "world_cup_penalty_goals"
+    _attr_name = "World Cup Penalty Goals"
+
+    @property
+    def native_value(self) -> int:
+        return sum((s.get("penalties") or 0) for s in get_scorers(self.coordinator))
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        scorers = [format_scorer(s) for s in get_scorers(self.coordinator)]
+        pen_scorers = sorted(
+            [s for s in scorers if s["penalties"] > 0],
+            key=lambda x: x["penalties"],
+            reverse=True,
+        )
+        total_goals_all = sum(s["goals"] for s in scorers)
+        total_pens = self.native_value
+        return {
+            "total_penalty_goals": total_pens,
+            "total_goals": total_goals_all,
+            "penalty_percentage": round(total_pens / total_goals_all * 100, 1)
+            if total_goals_all else 0,
+            "players": pen_scorers[:20],
+        }
 
 
 class WorldCupBttsRateSensor(CoordinatorEntity, SensorEntity):

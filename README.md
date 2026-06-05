@@ -246,6 +246,30 @@ sensor.world_cup_top_scorer
 sensor.world_cup_top_scorers
 sensor.world_cup_top_assist
 sensor.world_cup_top_assists
+sensor.world_cup_top_scorer_no_pen
+sensor.world_cup_goal_contributions
+sensor.world_cup_penalty_goals
+```
+
+## Betting & Match Stats
+
+```text
+sensor.world_cup_btts_rate
+sensor.world_cup_over_2_5_rate
+sensor.world_cup_draw_rate
+sensor.world_cup_clean_sheets
+sensor.world_cup_unbeaten_teams
+sensor.world_cup_comebacks
+sensor.world_cup_first_half_goals
+sensor.world_cup_second_half_goals
+```
+
+## Knockout Tracking
+
+```text
+sensor.world_cup_group_leaders
+sensor.world_cup_extra_time_matches
+sensor.world_cup_penalty_shootouts
 ```
 
 ---

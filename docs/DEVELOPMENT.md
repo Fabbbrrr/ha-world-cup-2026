@@ -469,7 +469,7 @@ Never remove or reorder existing sensors. HA tracks them by unique ID, but reord
 | **Phase 1** | ✅ DONE | `docs/specs/PHASE_1_BUG_FIXES.md` | Fix scorers API call; adaptive polling |
 | **Phase 2** | ✅ DONE | `docs/specs/PHASE_2_ENRICH_SENSORS.md` | halfTime scores; score.duration; live minute; team form; group leaders |
 | **Phase 3** | ✅ DONE | `docs/specs/PHASE_3_COMPUTED_STATS.md` | BTTS rate; Over 2.5 rate; draw rate; comebacks; clean sheets; unbeaten teams |
-| **Phase 4** | 🔴 TODO | `docs/specs/PHASE_4_PLAYER_STATS.md` | Non-penalty scorer; G+A contributions; enriched player profiles |
+| **Phase 4** | ✅ DONE | `docs/specs/PHASE_4_PLAYER_STATS.md` | Non-penalty scorer; G+A contributions; enriched player profiles |
 
 **Already implemented (no spec work needed):**
 - Demo mode toggle — OptionsFlow in `config_flow.py`, reads from `entry.options`; auto-reload on save
