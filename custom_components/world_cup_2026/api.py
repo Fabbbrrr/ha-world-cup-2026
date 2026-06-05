@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 
 import aiohttp
 
-FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "tests", "fixtures")
+FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
 BASE_URL = "https://api.football-data.org/v4"
 
@@ -40,13 +41,13 @@ class WorldCupAPI:
     async def get_matches(self) -> dict:
         """Return all World Cup matches."""
         if self.demo_mode:
-            return self._load_fixture("matches.json")
+            return await asyncio.to_thread(self._load_fixture, "matches.json")
         return await self._get(f"{BASE_URL}/competitions/WC/matches")
 
     async def get_standings(self) -> dict:
         """Return group stage standings."""
         if self.demo_mode:
-            return self._load_fixture("standings.json")
+            return await asyncio.to_thread(self._load_fixture, "standings.json")
         return await self._get(f"{BASE_URL}/competitions/WC/standings")
 
     async def get_scorers(self) -> dict:
@@ -57,7 +58,7 @@ class WorldCupAPI:
         are played, so this is an expected pre-tournament state, not an error.
         """
         if self.demo_mode:
-            return self._load_fixture("scorers.json")
+            return await asyncio.to_thread(self._load_fixture, "scorers.json")
         try:
             return await self._get(f"{BASE_URL}/competitions/WC/scorers?limit=100")
         except aiohttp.ClientResponseError as err:
