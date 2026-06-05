@@ -372,6 +372,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
         WorldCupStadiumsSensor(coordinator),
         WorldCupHostCitiesSensor(coordinator),
         WorldCupFinalVenueSensor(coordinator),
+
+        # Phase 2 additions
+        WorldCupGroupLeadersSensor(coordinator),
+        WorldCupExtraTimeSensor(coordinator),
+        WorldCupPenaltyShootoutSensor(coordinator),
     ]
 
     for group in [
@@ -409,7 +414,9 @@ def get_scorers(coordinator):
 def format_match(m, match_number=None):
     home = m.get("homeTeam", {})
     away = m.get("awayTeam", {})
-    score = m.get("score", {}).get("fullTime", {})
+    score_meta = m.get("score", {}) or {}
+    score = score_meta.get("fullTime", {}) or {}
+    half_time = score_meta.get("halfTime", {}) or {}
 
     home_name = home.get("shortName") or home.get("name") or "TBD"
     away_name = away.get("shortName") or away.get("name") or "TBD"
@@ -429,6 +436,12 @@ def format_match(m, match_number=None):
         "away": away_name,
         "homeScore": score.get("home"),
         "awayScore": score.get("away"),
+        # Phase 2 additions
+        "halfTimeHome": half_time.get("home"),
+        "halfTimeAway": half_time.get("away"),
+        "duration": score_meta.get("duration"),   # REGULAR | EXTRA_TIME | PENALTY_SHOOTOUT | None
+        "winner": score_meta.get("winner"),        # HOME_TEAM | AWAY_TEAM | DRAW | None
+        "minute": m.get("minute"),                 # int when IN_PLAY/PAUSED, else None
     }
 
 
@@ -490,6 +503,14 @@ def live_matches(coordinator):
     return [
         m for m in get_matches(coordinator)
         if m.get("status") in ["IN_PLAY", "PAUSED"]
+    ]
+
+
+def knockout_finished_matches(coordinator):
+    """Finished matches that are not group stage."""
+    return [
+        m for m in finished_matches(coordinator)
+        if m.get("stage") != "GROUP_STAGE"
     ]
 
 
@@ -592,6 +613,7 @@ class WorldCupStandingsSensor(CoordinatorEntity, SensorEntity):
                     "goalsAgainst": team.get("goalsAgainst"),
                     "goalDifference": team.get("goalDifference"),
                     "points": team.get("points"),
+                    "form": team.get("form") or "",  # e.g. "W,W,D" — Phase 2
                 })
 
             clean.append({
@@ -1388,6 +1410,92 @@ class WorldCupHostCitiesSensor(CoordinatorEntity, SensorEntity):
     @property
     def extra_state_attributes(self):
         return {"cities": get_host_cities()}
+
+
+class WorldCupGroupLeadersSensor(CoordinatorEntity, SensorEntity):
+    """Current leader (1st place) of each World Cup group."""
+
+    _attr_unique_id = "world_cup_group_leaders"
+    _attr_name = "World Cup Group Leaders"
+
+    def _compute_leaders(self) -> list:
+        """
+        Returns one entry per group that has at least 1 game played.
+        Each entry: { group, team, points, played, won, draw, lost, goalDifference, form }
+        Groups with no games played yet are omitted.
+        The API returns the table pre-sorted (points desc, GD desc) — no re-sort needed.
+        """
+        leaders = []
+        for group in get_standings(self.coordinator):
+            table = group.get("table") or []
+            active = [row for row in table if (row.get("playedGames") or 0) > 0]
+            if not active:
+                continue
+            top = active[0]
+            team_data = top.get("team", {}) or {}
+            leaders.append({
+                "group": group.get("group"),
+                "team": team_data.get("shortName") or team_data.get("name") or "Unknown",
+                "points": top.get("points") or 0,
+                "played": top.get("playedGames") or 0,
+                "won": top.get("won") or 0,
+                "draw": top.get("draw") or 0,
+                "lost": top.get("lost") or 0,
+                "goalDifference": top.get("goalDifference") or 0,
+                "form": top.get("form") or "",
+            })
+        return leaders
+
+    @property
+    def native_value(self) -> int:
+        """Number of groups with at least one game played."""
+        return len(self._compute_leaders())
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"leaders": self._compute_leaders()}
+
+
+class WorldCupExtraTimeSensor(CoordinatorEntity, SensorEntity):
+    """Knockout matches decided in extra time (excludes penalty shootouts)."""
+
+    _attr_unique_id = "world_cup_extra_time_matches"
+    _attr_name = "World Cup Extra Time Matches"
+
+    def _et_matches(self) -> list:
+        return [
+            m for m in knockout_finished_matches(self.coordinator)
+            if (m.get("score") or {}).get("duration") == "EXTRA_TIME"
+        ]
+
+    @property
+    def native_value(self) -> int:
+        return len(self._et_matches())
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"matches": [format_match(m) for m in self._et_matches()]}
+
+
+class WorldCupPenaltyShootoutSensor(CoordinatorEntity, SensorEntity):
+    """Knockout matches decided by penalty shootout."""
+
+    _attr_unique_id = "world_cup_penalty_shootouts"
+    _attr_name = "World Cup Penalty Shootouts"
+
+    def _pen_matches(self) -> list:
+        return [
+            m for m in knockout_finished_matches(self.coordinator)
+            if (m.get("score") or {}).get("duration") == "PENALTY_SHOOTOUT"
+        ]
+
+    @property
+    def native_value(self) -> int:
+        return len(self._pen_matches())
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"matches": [format_match(m) for m in self._pen_matches()]}
 
 
 class WorldCupFinalVenueSensor(CoordinatorEntity, SensorEntity):

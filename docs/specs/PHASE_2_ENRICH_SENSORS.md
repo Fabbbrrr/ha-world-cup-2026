@@ -1,9 +1,9 @@
 # Phase 2 — Enrich Existing Sensors with Untapped API Data
 
-> **Status:** TODO  
+> **Status:** DONE  
 > **Depends on:** Phase 1 complete  
-> **Files to modify:** `sensor.py` only (all changes in one file)  
-> **Files to read first:** `DEVELOPMENT.md` (Sections 4, 7), `specs/PHASE_1_BUG_FIXES.md`
+> **Files modified:** `sensor.py`  
+> **Files to read first:** `docs/DEVELOPMENT.md` (Sections 4, 7), `docs/specs/PHASE_1_BUG_FIXES.md`
 
 ---
 
